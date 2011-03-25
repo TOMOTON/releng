@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.buckminster.cmdline.commands">
+      <command
+            addhelpflags="true"
+            class="org.eclipse.buckminster.gwt.internal.GWTCompile"
+            name="gwtcompile"
+            status="NORMAL">
+         <alias
+               name="gwtc">
+         </alias>
+      </command>
+   </extension>
+    
+</plugin>
