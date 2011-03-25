@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eclipse.buckminster.cmdline.commands">
+      <command
+            addhelpflags="true"
+            class="org.eclipse.buckminster.ide.commands.ImportProjects"
+            name="importprojects"
+            status="NORMAL">
+         <alias
+               name="iprjs">
+         </alias>
+      </command>
+      <command
+            addhelpflags="true"
+            class="org.eclipse.buckminster.ide.commands.ListWorkspace"
+            name="listworkspace"
+            status="NORMAL">
+         <alias
+               name="lsws">
+         </alias>
+      </command>
+   </extension>
+</plugin>

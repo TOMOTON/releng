@@ -1,0 +1,21 @@
+Imports the projects contained in a directory into the current workspace 
+
+usage: importprojects
+       [{-C | --copy}]
+       [{-O | --overwrite}]
+       [{ -? | --help }]
+       <path>
+ -?
+--help
+  Show this help text
+
+-C
+--copy
+Copy the projects to the current workspace.
+
+-O
+--overwrite
+Overwrite existing projects in the workspace in case of a naming collision.
+
+<path or URI>
+The path that appoints the import directory.

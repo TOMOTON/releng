@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Buckminster PDE Commands Plug-in
+Bundle-SymbolicName: org.eclipse.buckminster.pde.product.commands;singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.buckminster.core,
+ org.eclipse.buckminster.cmdline,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.pde.core
+Eclipse-LazyStart: true

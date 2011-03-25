@@ -1,0 +1,8 @@
+Lists the contents of the current workspace.
+
+usage: listworkspace
+       [{ -? | --help }]
+
+ -?
+--help
+  Show this help text

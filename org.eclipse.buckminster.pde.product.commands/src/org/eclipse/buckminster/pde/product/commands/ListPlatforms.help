@@ -1,0 +1,10 @@
+This command lists the platforms supported in PDE cross-platform product export.
+
+The listing can help define the --platform property of the 'ProductExport' command.
+
+usage: listplatforms
+       [{ -? | --help }]
+
+ -?
+--help
+  Show this help text.
