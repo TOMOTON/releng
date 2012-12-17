@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="egit"
+         point="org.eclipse.pde.team.versionMetadataProvider">
+      <provider
+            class="org.eclipse.pde.team.egit.internal.EGitVersionMetadataProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+         <initializer class="org.eclipse.pde.team.egit.internal.MainlineInitializer"/>         
+   </extension>
+
+</plugin>

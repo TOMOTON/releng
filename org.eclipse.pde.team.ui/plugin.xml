@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="org.eclipse.pde.team.versionContribution"
+            nameFilter="*"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="org.eclipse.pde.team.ui.internal.ToggleVersionNatureAction"
+               enablesFor="+"
+               id="org.eclipse.pde.team.addRemoveVersionNatureAction"
+               label="Add/Remove Version Nature"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+	      <page
+	            name="%preferences.team.name"
+	            category="org.eclipse.pde.ui.MainPreferencePage"
+	            class="org.eclipse.pde.team.ui.internal.TeamPreferencePage"
+	            id="org.eclipse.pde.team.ui.TeamPreferencePage">
+	            <keywordReference id="org.eclipse.pde.ui.pde"/>
+	            <keywordReference id="org.eclipse.pde.team.ui.TeamPreferencePage"/>
+	      </page>         
+   </extension>
+   <extension
+   		point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.TeamPreferencePage"
+            id="org.eclipse.pde.team.ui.TeamPreferencePage"/>
+   </extension>   
+</plugin>

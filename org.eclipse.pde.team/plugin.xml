@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="versionMetadataProvider" name="Version Metadata Provider" schema="schema/versionMetadataProvider.exsd"/>
+   <extension
+         id="versionBuilder"
+         name="Version Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.pde.team.internal.VersionBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="versionNature"
+         name="Version Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.team.VersionNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.pde.team.versionBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="xmlProblem"
+         name="XML Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+
+</plugin>

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PDE Versioning from EGit
+Bundle-SymbolicName: org.eclipse.pde.team.egit;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.pde.team,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.team.core,
+ org.eclipse.egit.core,
+ org.eclipse.jgit
