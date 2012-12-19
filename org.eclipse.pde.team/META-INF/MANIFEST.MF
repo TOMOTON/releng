@@ -6,6 +6,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
- org.eclipse.team.core
+ org.eclipse.team.core,
+ org.eclipse.pde.core
 Export-Package: org.eclipse.pde.team
 Bundle-ActivationPolicy: lazy
