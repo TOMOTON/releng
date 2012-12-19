@@ -2,9 +2,9 @@ package org.eclipse.pde.team;
 
 public class SimpleVersionMetadata implements VersionMetadata {
 
-	private boolean baseline;
+	private String baseline;
 	
-	private boolean mainline;
+	private String mainline;
 	
 	private boolean mostRecent;
 	
@@ -12,13 +12,24 @@ public class SimpleVersionMetadata implements VersionMetadata {
 	
 	@Override
 	public boolean isBaseline() {
-		return baseline;
+		return baseline != null;
 	}
 
 	@Override
-	public boolean isMainline() {
+	public String getMainline() {
 		return mainline;
 	}
+	
+	@Override
+	public boolean isMainline() {
+		return mainline != null;
+	}
+
+	@Override
+	public String getBaseline() {
+		return baseline;
+	}
+
 
 	@Override
 	public boolean isMostRecent() {
@@ -30,11 +41,18 @@ public class SimpleVersionMetadata implements VersionMetadata {
 		return rawVersion;
 	}
 
-	public SimpleVersionMetadata(String rawVersion, boolean mostRecent,	boolean mainline, boolean baseline) {
+	public SimpleVersionMetadata(String rawVersion, boolean mostRecent,	String mainline, String baseline) {
 		this.rawVersion = rawVersion;
 		this.mostRecent = mostRecent;
 		this.mainline = mainline;
 		this.baseline = baseline;
+	}
+
+	@Override
+	public String toString() {
+		return "SimpleVersionMetadata [baseline=" + baseline + ", mainline="
+				+ mainline + ", mostRecent=" + mostRecent + ", rawVersion="
+				+ rawVersion + "]";
 	}
 
 }

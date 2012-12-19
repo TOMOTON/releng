@@ -11,11 +11,23 @@ public interface VersionMetadata {
 	public boolean isBaseline();
 	
 	/**
+	 * Gets the baseline.
+	 * @return A <code>String</code>.
+	 */
+	public String getBaseline();
+	
+	/**
 	 * Checks if this unique line of development is main. Also known as 
 	 * 'trunk' or 'master'.
 	 * @return A <code>boolean</code>flag.
 	 */
 	public boolean isMainline();
+	
+	/**
+	 * Gets the mainline.
+	 * @return A <code>String</code>.
+	 */
+	public String getMainline();
 	
 	//public Version getMainLine(); ??? If this is a branch, from where?
 	
