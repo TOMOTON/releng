@@ -17,6 +17,15 @@
             status="NORMAL">
          <alias name="lspl"/>
       </command>
+      <command
+            addhelpflags="true"
+            class="org.eclipse.buckminster.pde.product.commands.IncludeDeltaPack"
+            name="includedeltapack"
+            status="NORMAL">
+         <alias
+               name="incld">
+         </alias>
+      </command>
    </extension>
 
 </plugin>
