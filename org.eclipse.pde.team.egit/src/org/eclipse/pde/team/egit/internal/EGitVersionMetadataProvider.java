@@ -43,8 +43,6 @@ public class EGitVersionMetadataProvider implements VersionMetadataProvider {
 	
 	private static final String REMOTE = "REMOTE";
 	
-	private static final String MASTER = "master";
-	
 	private static final String ORIGIN = "origin";
 	
 	private static IScopeContext[] ANY_SCOPE = null;
@@ -82,7 +80,7 @@ public class EGitVersionMetadataProvider implements VersionMetadataProvider {
 				throw new UnsupportedOperationException();
 			} else {
 				repositoryDir = new File(project.getLocation().toFile(), gitDir);
-				repositoryDir = new File("D:\\GitHub\\lib-gwt-svg\\.git");
+				repositoryDir = new File("D:\\GitHub\\releng\\.git");
 			}
 			try {
 	        	FileRepositoryBuilder builder = new FileRepositoryBuilder();
@@ -90,15 +88,18 @@ public class EGitVersionMetadataProvider implements VersionMetadataProvider {
 	        	  .readEnvironment() // scan environment GIT_* variables
 	        	  .findGitDir() // scan up the file system tree
 	        	  .build();
-	        	String configuredMainline = Platform.getPreferencesService().getString(ORG_ECLIPSE_PDE_TEAM, MAINLINE, MASTER, ANY_SCOPE);
 	        	String configuredRemote = Platform.getPreferencesService().getString(ORG_ECLIPSE_PDE_TEAM_EGIT, REMOTE, ORIGIN, ANY_SCOPE);
 	        	ObjectId head = repository.resolve(Constants.HEAD);
 	        	TagMeta tag = describe(repository, head);
 	        	if(tag == null) { //? We're not on a tag.
-	        		String remoteName = "refs/remotes/" + configuredRemote + "/" + configuredMainline;
+	        		String remoteName = "refs/remotes/" + configuredRemote + "/" + repository.getBranch();
 	        		result = new SimpleVersionMetadata(repository.getBranch() + "-g" + head.getName(), isMostRecent(repository, head, remoteName), repository.getBranch(), null);
 	        	} else {	        		
-	        		result = new SimpleVersionMetadata(tag.getName() + '-' + tag.getDistance() + "-g" + head.getName(), tag.getDistance() == 0, null, tag.getName());
+	        		if(tag.getDistance() == 0) {
+	        			result = new SimpleVersionMetadata(tag.getName(), true, null, tag.getName());
+	        		} else {
+	        			result = new SimpleVersionMetadata(tag.getName() + '-' + tag.getDistance() + "-g" + head.getName(), false, null, tag.getName());
+	        		}
 	        	}
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -149,7 +149,9 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 			ManifestUpdater updater = new ManifestUpdater(PDEProject.getManifest(getProject()));
 			if(versionMetadata.isBaseline()) {
 				updater.update(versionMetadata.getBaseline(), monitor);
-			}			
+			} else {
+				updater.update("0.0.0." + versionMetadata.getRawVersion(), monitor);
+			}
 
 //			XMLErrorHandler reporter = new XMLErrorHandler(file);
 //			try {
