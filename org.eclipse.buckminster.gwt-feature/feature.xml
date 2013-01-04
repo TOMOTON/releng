@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.buckminster.gwt"
+      label="GWT Feature"
+      version="1.0.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.core.commands"/>
+      <import plugin="org.eclipse.core.jobs"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.equinox.p2.publisher"/>
+      <import plugin="org.eclipse.equinox.p2.publisher.eclipse"/>
+      <import plugin="org.eclipse.equinox.p2.updatesite"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.jdt.launching.macosx"/>
+      <import plugin="org.eclipse.jdt.junit.core"/>
+      <import plugin="org.eclipse.jdt.junit.runtime"/>
+      <import plugin="org.eclipse.jdt.junit4.runtime"/>
+      <import plugin="org.eclipse.pde.api.tools"/>
+      <import plugin="org.eclipse.pde.build"/>
+      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.pde.junit.runtime"/>
+      <import plugin="org.eclipse.pde.launching"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.hamcrest.core"/>
+      <import plugin="org.junit"/>
+      <import plugin="org.junit4"/>
+      <import plugin="org.objectweb.asm"/>
+      <import plugin="org.eclipse.core.variables"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.buckminster.jarprocessor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.buckminster.jdt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.buckminster.junit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.buckminster.gwt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.gwt.eclipse.sdkbundle"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
