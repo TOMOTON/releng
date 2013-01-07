@@ -1,15 +1,5 @@
 package com.google.gwt.eclipse.core;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.launching.StandardVMType;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -19,13 +9,22 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.launching.StandardVMType;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+
+import com.google.gwt.eclipse.core.internal.GWTActivator;
+
 /**
  * Helper methods for creating Java processes.
  */
 @SuppressWarnings("restriction")
 public class ProcessUtilities {
-	
-	private static final String PLUGIN_ID = "org.eclipse.buckminster.gwt";
 
   /**
    * Receives {@link Process} instances.
@@ -76,7 +75,7 @@ public class ProcessUtilities {
       throw new CoreException(
           new Status(
               Status.ERROR,
-              PLUGIN_ID,
+              GWTActivator.PLUGIN_ID,
               "Unable to locate the JVM for project "
                   + javaProject.getElementName()
                   + ". Please verify that you have a project-level JVM installed by inspecting your project's build path."));
@@ -104,7 +103,7 @@ public class ProcessUtilities {
       throw new CoreException(
           new Status(
               Status.ERROR,
-              PLUGIN_ID,
+              GWTActivator.PLUGIN_ID,
               "Cannot read the java.home property - unable detect the JVM that Eclipse is running on."));
     }
 
@@ -114,7 +113,7 @@ public class ProcessUtilities {
       throw new CoreException(
           new Status(
               Status.ERROR,
-              PLUGIN_ID,
+              GWTActivator.PLUGIN_ID,
               "Unable to find a java executable for the JVM that Eclipse is running on (located at "
                   + javaHomeDir.getAbsolutePath()
                   + "). Please verify that this JVM is installed properly."));
@@ -362,7 +361,7 @@ public class ProcessUtilities {
       throw new CoreException(
           new Status(
               Status.ERROR,
-              PLUGIN_ID,
+              GWTActivator.PLUGIN_ID,
               "Unable to determine the path for the JVM "
                   + vmInstall.getName()
                   + ". Please verify that this JVM is installed properly by inspecting your project's build path."));
@@ -374,7 +373,7 @@ public class ProcessUtilities {
       throw new CoreException(
           new Status(
               Status.ERROR,
-              PLUGIN_ID,
+              GWTActivator.PLUGIN_ID,
               "Unable to find a java executable for the JVM   "
                   + vmInstall.getName()
                   + " located at "
