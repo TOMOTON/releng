@@ -34,7 +34,8 @@ public class StartCompilationHandler extends AbstractHandler {
 			  public void run() {
 					GWTCompile compile = new GWTCompile();
 					compile.setProjectName("com.google.test");
-					compile.setModule("com.google.test.Test");
+					compile.setModules(new String[] { "com.google.test.Test" });
+					compile.setGwtVersion("2.5.0");
 					
 					try {
 						compile.go();
