@@ -8,4 +8,17 @@
             id="com.google.gwt.eclipse.core.GWT_CONTAINER">
       </classpathContainerInitializer>
    </extension>
+   <extension
+         id="gwtNature"
+         name="GWT Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="com.google.gwt.eclipse.core.nature.GWTNature">
+         </run>
+      </runtime>
+      <requires-nature
+            id="org.eclipse.jdt.core.javanature">
+      </requires-nature>
+   </extension>   
 </plugin>

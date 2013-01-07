@@ -21,10 +21,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import com.google.gwt.eclipse.core.internal.GWTActivator;
+
 @SuppressWarnings("restriction")
 public final class ClasspathUtilities {
-
-	private static final String PLUGIN_ID = "org.eclipse.buckminster.gwt";
 	
   /**
    * Returns the {@link IClasspathEntry#CPE_CONTAINER} entry with the specified
@@ -35,8 +35,7 @@ public final class ClasspathUtilities {
    * @return {@link IClasspathEntry#CPE_CONTAINER} entry with the specified
    *         container ID or <code>null</code> if one could not be found
    */
-  public static IClasspathEntry findClasspathEntryContainer(
-      IClasspathEntry[] classpathEntries, String containerId) {
+  public static IClasspathEntry findClasspathEntryContainer(IClasspathEntry[] classpathEntries, String containerId) {
     int index = indexOfClasspathEntryContainer(classpathEntries, containerId);
     if (index >= 0) {
       return classpathEntries[index];
@@ -52,8 +51,7 @@ public final class ClasspathUtilities {
    * @return flattened String of the given classpath entries in the format
    *         suitable for passing as a JVM argument
    */
-  public static String flattenToClasspathString(
-      List<IRuntimeClasspathEntry> classpathEntries) {
+  public static String flattenToClasspathString(List<IRuntimeClasspathEntry> classpathEntries) {
     StringBuilder sb = new StringBuilder();
     boolean needsSeparator = false;
     for (IRuntimeClasspathEntry r : classpathEntries) {
@@ -77,8 +75,7 @@ public final class ClasspathUtilities {
    * @return index of the specified {@link IClasspathEntry#CPE_CONTAINER} entry
    *         with the specified container ID or -1
    */
-  public static int indexOfClasspathEntryContainer(
-      IClasspathEntry[] classpathEntries, String containerId) {
+  public static int indexOfClasspathEntryContainer(IClasspathEntry[] classpathEntries, String containerId) {
     for (int i = 0; i < classpathEntries.length; ++i) {
       IClasspathEntry classpathEntry = classpathEntries[i];
       if (classpathEntry.getEntryKind() != IClasspathEntry.CPE_CONTAINER) {
@@ -109,9 +106,7 @@ public final class ClasspathUtilities {
    *          source
    * @throws SdkException
    */
-  private static void fillGWTSourceFolderPathsFromProject(
-      IJavaProject javaProject, Collection<? super IRuntimeClasspathEntry>
-      sourceEntries, boolean includeTestSourceEntries) throws CoreException {
+  private static void fillGWTSourceFolderPathsFromProject(IJavaProject javaProject, Collection<? super IRuntimeClasspathEntry> sourceEntries, boolean includeTestSourceEntries) throws CoreException {
     
     assert (javaProject != null);
 
@@ -152,9 +147,7 @@ public final class ClasspathUtilities {
    * 
    * @see #fillGWTSourceFolderPathsFromProject(IJavaProject, Collection, boolean)
    */
-  public static List<IRuntimeClasspathEntry> getGWTSourceFolderPathsFromProjectAndDependencies(
-      IJavaProject javaProject, boolean includeTestSourceEntries)
-      throws JavaModelException, CoreException {
+  public static List<IRuntimeClasspathEntry> getGWTSourceFolderPathsFromProjectAndDependencies(IJavaProject javaProject, boolean includeTestSourceEntries) throws JavaModelException, CoreException {
     List<IRuntimeClasspathEntry> sourceEntries =
         new ArrayList<IRuntimeClasspathEntry>();
     for (IJavaProject curJavaProject :
@@ -270,7 +263,7 @@ public final class ClasspathUtilities {
     try {
       gwtUserJavaProjClasspathEntries = project.getRawClasspath();
     } catch (JavaModelException e) {
-      throw new CoreException(new Status(Status.ERROR, PLUGIN_ID, "Cannot extract raw classpath from " + projectName
+      throw new CoreException(new Status(Status.ERROR, GWTActivator.PLUGIN_ID, "Cannot extract raw classpath from " + projectName
           + " project."));
     }
 

@@ -1,7 +1,6 @@
 package com.google.gwt.eclipse.core;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -19,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.core.IJavaProject;
@@ -27,13 +25,13 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import com.google.gwt.eclipse.core.internal.GWTActivator;
+
 
 /**
  * Performs a GWT compilation on a project.
  */
 public class SimpleGWTCompileRunner {
-
-  private static final String PLUGIN_ID = "org.eclipse.buckminster.gwt.headless";
 	
   private static final Pattern EXTRACT_QUOTED_ARGS_PATTERN = Pattern.compile("^([\"'])(.*)([\"'])$");
 
@@ -82,7 +80,7 @@ public class SimpleGWTCompileRunner {
         printWriter.flush();
         throw new OperationCanceledException();
       } else {
-        throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID,
+        throw new CoreException(new Status(IStatus.ERROR, GWTActivator.PLUGIN_ID,
             "GWT compilation failed"));
       }
     }
@@ -125,61 +123,14 @@ public class SimpleGWTCompileRunner {
           ClasspathUtilities.getGWTSourceFolderPathsFromProjectAndDependencies(
               javaProject, false));
     } catch (CoreException e) {
-      throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID,
+      throw new CoreException(new Status(IStatus.ERROR, GWTActivator.PLUGIN_ID,
           e.getLocalizedMessage(), e));
-    }
-
-    /*
-     * Try and add gwt-dev jar to the compiler classpath. It may already be on
-     * the build classpath, but in some cases (i.e. when using Maven), it may
-     * not be. Adding it to the end of the classpath (even if is duplicated)
-     * does no harm.
-     * 
-     * TODO: Consider invoking the appropriate ModuleClasspathProvider.
-     */
-    GWTRuntime gwtRuntime = GWTRuntime.findSdkFor(javaProject);
-    if (gwtRuntime == null) {
-      System.err.println("Unable to find GWT runtime for project "
-          + javaProject.getElementName()
-          + ", will try to continue GWT compilation..");
-      return resolvedRuntimeClasspath;
-    }
-
-//    IStatus validationStatus = gwtRuntime.validate();
-//    if (!validationStatus.isOK()) {
-//    	System.err.println("WARNING: GWT runtime for project "
-//          + javaProject.getElementName() + " is not valid: "
-//          + validationStatus.getMessage()
-//          + ". Will attempt to proceed with GWT compilation anyway.");
-//      return resolvedRuntimeClasspath;
-//    }
-
-    try {
-      File gwtDevJar = gwtRuntime.getDevJar();
-      resolvedRuntimeClasspath.add(JavaRuntime.newArchiveRuntimeClasspathEntry(Path.fromOSString(gwtDevJar.getAbsolutePath())));
-    } catch (CoreException e) {
-    	System.err.println("WARNING: Unable to add gwt-dev.jar to the compiler's classpath; will attempt GWT compilation anyway.");
-    	e.printStackTrace();
     }
 
     return resolvedRuntimeClasspath;
   }
 
-  private static String computeCompilerClassName(IJavaProject javaProject)
-      throws JavaModelException {
-//    IClasspathEntry classpathContainer = ClasspathUtilities.findClasspathEntryContainer(
-//        javaProject.getRawClasspath(), GWTRuntimeContainer.CONTAINER_ID);
-//    if (classpathContainer != null) {
-//      GWTRuntime sdk = GWTPreferences.getSdkManager().findSdkForPath(
-//          classpathContainer.getPath());
-//      if (sdk != null) {
-//        if (!sdk.containsSCL()) {
-//          return "com.google.gwt.dev.GWTCompiler";
-//        }
-//      }
-//    }
-//
-//    // Default to using the post-GWT 1.6 compiler class
+  private static String computeCompilerClassName(IJavaProject javaProject) throws JavaModelException {
     return "com.google.gwt.dev.Compiler";
   }
 
