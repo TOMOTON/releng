@@ -11,7 +11,6 @@ public class GWTRuntimeContainerInitializer extends	ClasspathContainerInitialize
 
 	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
-		System.err.println("CONTAINER PATH " + containerPath);
 	    GWTSDKClasspathContainer classpathContainer = GWTSDKClasspathContainer.resolveClasspathContainer(containerPath, javaProject);
 	    // Container will be set to null if it could not be resolved which will
 	    // result in a classpath error for the project.

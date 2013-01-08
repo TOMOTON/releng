@@ -52,8 +52,6 @@ public class GWTSDKClasspathContainer implements IClasspathContainer {
 	
 	public static IClasspathEntry[] jarToEntries(File jarFile) {
 		IClasspathEntry[] result = new IClasspathEntry[2];
-		System.err.println("jarFile should be at: " + jarFile.getAbsolutePath());
-		System.err.println("PATH jarFile should be at: " + new Path(jarFile.getAbsolutePath()).isAbsolute());
 		Path path = new Path(jarFile.getAbsolutePath() + ".jar");
 		Path sourcePath = new Path(jarFile.getAbsolutePath() + "-sources.jar");
 		if(sourcePath.toFile().exists()) {

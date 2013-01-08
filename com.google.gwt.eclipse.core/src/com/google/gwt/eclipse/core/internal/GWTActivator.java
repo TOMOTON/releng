@@ -35,7 +35,6 @@ public class GWTActivator implements BundleActivator {
 			InputStream in = null;
 			try {
 				if(location != null) {
-					System.err.println("FOUND " + location);
 					Properties properties = new Properties();
 					in = location.openStream(); 
 					properties.load(in);
@@ -43,8 +42,6 @@ public class GWTActivator implements BundleActivator {
 						String id = properties.getProperty(SDK_BUNDLE_PATH);
 						File path = new File(FileLocator.toFileURL(location).toURI());
 						File sdkPath = new File(path.getParentFile(), id);
-						System.err.println("PATH from URL " + path);
-						System.err.println("SDK PATH  " + sdkPath);
 						GWTSDK sdk = new GWTSDK(id, sdkPath);
 						result.put(bundle.getVersion(), sdk);
 					}

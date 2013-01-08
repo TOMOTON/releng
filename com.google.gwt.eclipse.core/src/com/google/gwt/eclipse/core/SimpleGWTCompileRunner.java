@@ -45,21 +45,17 @@ public class SimpleGWTCompileRunner {
       ProcessUtilities.IProcessReceiver processReceiver) throws IOException,
       InterruptedException, CoreException, OperationCanceledException {
     IProject project = javaProject.getProject();
-
-	System.err.println("(3.1)");
-    
     if (settings.getEntryPointModules().isEmpty()) {
       // Nothing to compile, so just return.
       return;
     }
-
-	System.err.println("(3.2) " + computeCompilerCommandLine(javaProject, warLocation, settings));
-    
+	List<String> commandLine = computeCompilerCommandLine(javaProject, warLocation, settings);
+	if("DEBUG".equals(settings.getLogLevel())) {
+		dumpCommandLine(commandLine);
+	}
     int processStatus = ProcessUtilities.launchProcessAndWaitFor(
-        computeCompilerCommandLine(javaProject, warLocation, settings),
+        commandLine,
         project.getLocation().toFile(), consoleOutputStream, processReceiver);
-
-	System.err.println("(3.3)");
     
     /*
      * Do a refresh on the war folder if it's in the workspace. This ensures
@@ -80,10 +76,24 @@ public class SimpleGWTCompileRunner {
         printWriter.flush();
         throw new OperationCanceledException();
       } else {
-        throw new CoreException(new Status(IStatus.ERROR, GWTActivator.PLUGIN_ID,
-            "GWT compilation failed"));
+        throw new CoreException(new Status(IStatus.ERROR, GWTActivator.PLUGIN_ID, "GWT compilation failed!"));
       }
     }
+  }
+  
+  private static void dumpCommandLine(List<String> commandLine) {
+		System.out.print("Invoking GWT compiler with \"");
+		char spacer = 0;
+		for(String string: commandLine) {
+			if(spacer == 0) {
+				spacer = ' ';				
+			} else {
+				System.out.print(spacer);
+			}
+			System.out.print(string);
+		}
+		
+		System.out.println("\"");
   }
 
   public static String computeTaskName(IProject project) {
