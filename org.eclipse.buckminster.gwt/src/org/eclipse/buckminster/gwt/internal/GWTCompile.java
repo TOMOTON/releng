@@ -214,8 +214,7 @@ public class GWTCompile extends WorkspaceCommand {
 		if(projectName == null)
 			throw new SimpleErrorExitException("Missing project name!");
 		if(modules == null || modules.length == 0)
-			throw new SimpleErrorExitException("At least one GWT module needs to be specified!");			
-		System.err.println("(1)");
+			throw new SimpleErrorExitException("At least one GWT module needs to be specified!");
 		int exitValue = 0;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject project = workspace.getRoot().getProject(projectName);
@@ -224,7 +223,6 @@ public class GWTCompile extends WorkspaceCommand {
 		if (!isJavaProjectNonNullAndExists(javaProject)) {
 			return 1;
 		}
-		System.err.println("(2)");
 		List<String> moduleList = new ArrayList<String>();
 		moduleList.addAll(Arrays.asList(modules));
 		SimpleGWTCompileSettings settings = new SimpleGWTCompileSettings(moduleList);
@@ -254,12 +252,9 @@ public class GWTCompile extends WorkspaceCommand {
 			        new IClasspathContainer[] { classpathContainer }, null);
 		}
 		try {
-			System.err.println("(3)");
 			SimpleGWTCompileRunner.compile(javaProject, new Path(warDirectory), settings, System.out, NULL_PROCESS_RECEIVER);
-			System.err.println("(4)");
 		} catch (Exception e) {
-			System.err.println("(EXCEPTION)");
-			e.printStackTrace();
+			System.err.println("GWT Compilation failed!");
 			exitValue = 1;
 		}
 		return exitValue;
@@ -277,14 +272,6 @@ public class GWTCompile extends WorkspaceCommand {
 			//? Intentionally left blank.			
 		}
 		
-	}
-
-	public void go() throws Exception {
-		try {
-			internalRun(getProgressProvider().getDefaultMonitor());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 }
