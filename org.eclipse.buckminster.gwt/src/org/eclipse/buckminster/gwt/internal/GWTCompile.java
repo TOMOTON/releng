@@ -12,6 +12,7 @@ import org.eclipse.buckminster.core.commands.WorkspaceCommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -253,8 +254,12 @@ public class GWTCompile extends WorkspaceCommand {
 		}
 		try {
 			SimpleGWTCompileRunner.compile(javaProject, new Path(warDirectory), settings, System.out, NULL_PROCESS_RECEIVER);
-		} catch (Exception e) {
-			System.err.println("GWT Compilation failed!");
+		} catch (CoreException ce) {
+			System.err.println(ce.getStatus().getMessage());
+			exitValue = 1;
+		} catch(Exception e) {
+			System.err.println("An unexpected problem occured!");
+			e.printStackTrace();
 			exitValue = 1;
 		}
 		return exitValue;
