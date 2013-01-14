@@ -70,7 +70,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.runtime.contentTypes/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
                </appinfo>
             </annotation>
          </attribute>

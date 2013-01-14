@@ -8,9 +8,14 @@
          name="Version Builder"
          point="org.eclipse.core.resources.builders">
       <builder
-            hasNature="true">
+            hasNature="true"
+            isConfigurable="true">
          <run
                class="org.eclipse.pde.team.internal.VersionBuilder">
+            <parameter
+                  name="org.eclipse.pde.team.version.pattern"
+                  value="*">
+            </parameter>
          </run>
       </builder>
    </extension>
