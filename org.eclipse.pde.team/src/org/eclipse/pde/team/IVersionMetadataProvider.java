@@ -2,9 +2,9 @@ package org.eclipse.pde.team;
 
 import org.eclipse.core.resources.IProject;
 
-public interface VersionMetadataProvider {
+public interface IVersionMetadataProvider {
 
-	VersionMetadata getVersionMetadata(IProject project);
+	IVersionMetadata getVersionMetadata(IProject project);
 	
 	String getTeamProviderID();
 	

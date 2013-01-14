@@ -12,16 +12,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.team.IVersionUpdater;
 
-public class ManifestUpdater {
+public class ManifestUpdater implements IVersionUpdater {
 
-	private IFile manifestFile;
-	
-	public ManifestUpdater(IFile manifestFile) {
-		this.manifestFile = manifestFile;
-	}
-
-	public void update(String version, IProgressMonitor monitor) throws CoreException {
+	@Override
+	public void update(IFile manifestFile, String version, IProgressMonitor monitor) throws CoreException {
+		if(version == null)
+			throw new NullPointerException("Version cannot be undefined!");
 		InputStream in = manifestFile.getContents();
 		ByteArrayOutputStream content;
 		try {

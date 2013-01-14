@@ -1,7 +1,7 @@
 package org.eclipse.pde.team;
 
 
-public interface VersionMetadata {
+public interface IVersionMetadata {
 
 	/**
 	 * Checks if this unique line of development is baselined. Also known as 

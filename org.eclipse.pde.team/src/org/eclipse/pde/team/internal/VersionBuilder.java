@@ -1,7 +1,10 @@
 package org.eclipse.pde.team.internal;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -9,20 +12,26 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.pde.internal.core.project.PDEProject;
-import org.eclipse.pde.team.VersionMetadata;
-import org.eclipse.pde.team.VersionMetadataProvider;
+import org.eclipse.pde.team.IVersionMetadata;
+import org.eclipse.pde.team.IVersionMetadataProvider;
+import org.eclipse.pde.team.IVersionUpdater;
 import org.eclipse.team.core.RepositoryProvider;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class VersionBuilder extends IncrementalProjectBuilder {
+	
+	final IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
 	class UpdateVersionDeltaVisitor implements IResourceDeltaVisitor {
 
@@ -39,7 +48,7 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 					updateVersion(resource, monitor);
 					break;
 				case IResourceDelta.REMOVED:
-					// handle removed resource
+					//? Nothing to do.
 					break;
 				case IResourceDelta.CHANGED:
 					updateVersion(resource, monitor);
@@ -79,31 +88,54 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 
 	private static final String MARKER_TYPE = "org.eclipse.pde.team.xmlProblem";
 	
-	private static final String EXTENSION_POINT_ID = "org.eclipse.pde.team.versionMetadataProvider";
+	private static final String PROVIDER_EXTENSION_POINT_ID = "org.eclipse.pde.team.versionMetadataProvider";
 
-	private ConcurrentHashMap<String, VersionMetadataProvider> providerMap = new ConcurrentHashMap<String, VersionMetadataProvider>();
+	private static final String UPDATER_EXTENSION_POINT_ID = "org.eclipse.pde.team.resourceVersionUpdater";
+	
+	private ConcurrentHashMap<String, IVersionMetadataProvider> providerMap = new ConcurrentHashMap<String, IVersionMetadataProvider>();
+	
+	private ConcurrentHashMap<String, IVersionUpdater> updaterMap = new ConcurrentHashMap<String, IVersionUpdater>();
 	
 	public VersionBuilder() {
 		super();
 		try {
-			IConfigurationElement[] elements = Platform.getExtensionRegistry(). getConfigurationElementsFor(EXTENSION_POINT_ID);
+			IConfigurationElement[] elements = Platform.getExtensionRegistry(). getConfigurationElementsFor(PROVIDER_EXTENSION_POINT_ID);
 			for(IConfigurationElement element: elements) {
 				if("provider".equals(element.getName())) {
-					String className = element.getAttribute("class");
-					VersionMetadataProvider provider;
+					IVersionMetadataProvider provider;
 					try {
-						provider = (VersionMetadataProvider) element.createExecutableExtension("class");							
+						provider = (IVersionMetadataProvider) element.createExecutableExtension("class");							
 					} catch (Exception e) {
-						throw new IllegalArgumentException("Extension does not implement VersionMetadataProvider!", e);
+						throw new IllegalArgumentException("Extension does not implement IVersionMetadataProvider!", e);
 					}
 					if(providerMap.putIfAbsent(provider.getTeamProviderID(), provider) != null) {
 						throw new IllegalStateException("Extension for team provider '" + provider.getTeamProviderID() + " alread registered!");
 					}		
 				}
 			}
-		} catch (Exception ignore) {
-			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		try {
+			IConfigurationElement[] elements = Platform.getExtensionRegistry(). getConfigurationElementsFor(UPDATER_EXTENSION_POINT_ID);
+			for(IConfigurationElement element: elements) {
+				if("updater".equals(element.getName())) {
+					IVersionUpdater updater;
+					try {
+						updater = (IVersionUpdater) element.createExecutableExtension("class");							
+					} catch (Exception e) {
+						throw new IllegalArgumentException("Extension does not implement IVersionUpdater!", e);
+					}
+					String contentTypeId = element.getAttribute("contentTypeId");
+					System.err.println("");
+					if(updaterMap.putIfAbsent(contentTypeId, updater) != null) {
+						throw new IllegalStateException("Updater for content type id " + contentTypeId + " already registered!");
+					}					
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 
 	private void addMarker(IFile file, String message, int lineNumber, int severity) {
@@ -138,29 +170,6 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 
-	void updateVersion(IResource resource, IProgressMonitor monitor) throws CoreException {
-		if (resource instanceof IFile && resource.getName().equals("MANIFEST.MF")) {
-			IFile file = (IFile) resource;
-			deleteMarkers(file);			
-			RepositoryProvider repositoryProvider = RepositoryProvider.getProvider(getProject());
-			VersionMetadataProvider metadataProvider = providerMap.get(repositoryProvider.getID());
-			VersionMetadata versionMetadata = metadataProvider.getVersionMetadata(getProject());
-			System.out.println("VERSION " + versionMetadata);
-			ManifestUpdater updater = new ManifestUpdater(PDEProject.getManifest(getProject()));
-			if(versionMetadata.isBaseline()) {
-				updater.update(versionMetadata.getBaseline(), monitor);
-			} else {
-				updater.update("0.0.0." + versionMetadata.getRawVersion(), monitor);
-			}
-
-//			XMLErrorHandler reporter = new XMLErrorHandler(file);
-//			try {
-//				getParser().parse(file.getContents(), reporter);
-//			} catch (Exception e1) {
-//			}
-		}
-	}
-
 	private void deleteMarkers(IFile file) {
 		try {
 			file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ZERO);
@@ -169,9 +178,55 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 	}
 
 	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
-		updateVersion(PDEProject.getManifest(getProject()), monitor);
+	
+		getProject().accept(new IResourceVisitor() {
+			@Override
+			public boolean visit(IResource resource) throws CoreException {
+				//! System.err.println(" IN " + resource.getName());
+				updateVersion(resource, monitor);
+				return true;
+			}
+		});
+	}
+	
+	private void updateVersion(IResource resource, IProgressMonitor monitor) throws CoreException {
+		if(resource instanceof IFile) {
+			for(IContentType type: contentTypeManager.findContentTypesFor(resource.getName())) {
+				IVersionUpdater updater = updaterMap.get(type.getId());
+				if(updater != null) {
+					IFile file = (IFile) resource;
+					String version = deriveVersion(file);
+					if(version != null) {
+						System.err.println("Updating " + file + " to version " + version);
+						updater.update(file, version, monitor);
+					}
+
+				}
+			}
+		}
 	}
 
+	private String deriveVersion(IFile file) {
+		String result = null;
+		RepositoryProvider repositoryProvider = RepositoryProvider.getProvider(getProject());
+		if(repositoryProvider != null) {
+			IVersionMetadataProvider metadataProvider = providerMap.get(repositoryProvider.getID());
+			if(metadataProvider != null) {
+				IVersionMetadata versionMetadata = metadataProvider.getVersionMetadata(getProject());
+				if(versionMetadata != null) {
+					System.out.println("VERSION " + versionMetadata);
+					if(versionMetadata.isBaseline()) {
+						result = versionMetadata.getBaseline(); 
+					} else {
+						result = "0.0.0." + versionMetadata.getRawVersion();
+					}					
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
 		delta.accept(new UpdateVersionDeltaVisitor(monitor));
 	}

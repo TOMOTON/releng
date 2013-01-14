@@ -1,6 +1,6 @@
 package org.eclipse.pde.team;
 
-public class SimpleVersionMetadata implements VersionMetadata {
+public class SimpleVersionMetadata implements IVersionMetadata {
 
 	private String baseline;
 	

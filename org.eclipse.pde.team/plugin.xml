@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="versionMetadataProvider" name="Version Metadata Provider" schema="schema/versionMetadataProvider.exsd"/>
+   <extension-point id="resourceVersionUpdater" name="Resource Updater" schema="schema/resourceVersionUpdater.exsd"/>
    <extension
          id="versionBuilder"
          name="Version Builder"
@@ -36,6 +37,20 @@
       <persistent
             value="true">
       </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.pde.team.resourceVersionUpdater">
+      <updater
+            class="org.eclipse.pde.team.internal.ManifestUpdater"
+            contentTypeId="org.eclipse.pde.bundleManifest">
+      </updater>
+   </extension>
+   <extension
+         point="org.eclipse.pde.team.resourceVersionUpdater">
+      <updater
+            class="org.eclipse.pde.team.internal.ProductUpdater"
+            contentTypeId="org.eclipse.pde.productFile">
+      </updater>
    </extension>
 
 </plugin>

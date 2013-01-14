@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.pde.team" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.pde.team" id="provider" name="Version Provider"/>
+         <meta.schema plugin="org.eclipse.pde.team" id="updater" name="Resource Version Updater"/>
       </appinfo>
       <documentation>
-         Provides versioning information from team provider metadata.
+         Resource-specific handler for updating version information.
       </documentation>
    </annotation>
 
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <choice>
-            <element ref="provider"/>
+            <element ref="updater"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,20 +47,30 @@
       </complexType>
    </element>
 
-   <element name="provider">
+   <element name="updater">
       <annotation>
          <documentation>
-            Provides metadata from a project&apos;s team provider to allow the version builder to derive an OSGi Version.
+            Updates the version information contained in a resource.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  An implimentation of &apos;VersionProvider&apos;.
+                  
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.team.VersionProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.team.IVersionUpdater"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="contentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.runtime.contentTypes/@id"/>
                </appinfo>
             </annotation>
          </attribute>
