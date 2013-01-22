@@ -1,0 +1,63 @@
+This command invokes the export of a product in the workspace.
+
+The export is based on a eclipse .product definition file.
+
+usage: exportfeature
+       [{ -? | --help }]
+       [{ -S | --source } INCLUDED | BUNDLE ]
+       [{ -J | --jar }]
+       [{ -M | --metadata }]
+       [{ -G | --category } <category_file>]
+       [{ -C | --cycles }]       
+       [{ -B | --build }]
+       [{ -Y | --synchronize }]
+       [{ -P | --platform } <comma_separated_platform_list>]       
+       [{ -Q | --qualifier } <qualifier>]  
+       [{ -R | --root } <root_directory>]
+       { -D | --destination } {<dot_zip_file> | <directory>}
+       <dot_product_file>       
+
+ -?
+--help
+  Show this help text.
+ -S
+--source
+  Include source code.
+ -J
+--jar
+  Package as individual JAR archives (required for JNLP and update sites).
+ -M
+--metadata
+  Generate metadata repository (ignored if --jar not set).
+ -G
+--category <category_file>
+  Categorize repository (ignored if --jar not set), using the full workspace
+  path to a category.xml file
+  (e.g. org.buckminster.eclipse/category.xml).
+ -B
+--build
+  Build separately: don't use class files compiled in the workspace. 
+--cycles
+  Allow binary cycles.
+ -Y
+--synchronize
+  Synchronize product configuration with the plugin's defining plug-in 
+  (ensures that the plug-in does not contain stale data).
+ -P
+--platform <comma_separated_platform_list> 
+  Specifies export to multiple platforms.
+  (e.g. win32:win32/x86,linux:gtk/ppc)
+ -Q
+--qualifier <qualifier>
+  Qualifier replacement (default value is today's date).
+ -R
+--root <root_directory>
+  Sets the root of the output directory. Defaults to 'eclipse'.   
+ -D
+--destination [<dot_zip_file> | <directory>]
+  The destination of the export artefact, 
+  either an archive (.zip extension) or a directory (no extension) name.  
+<dot_product_file>
+  The full workspace path to a .product file 
+  (e.g. org.buckminster.eclipse/buckminster.product).
+	

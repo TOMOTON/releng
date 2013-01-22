@@ -5,8 +5,10 @@ The export is based on a eclipse .product definition file.
 usage: exportproduct
        [{ -? | --help }]
        [{ -S | --source }]
-       { -D | --destination } {<dot_zip_file> | <directory>}
+       [{ -C | --cycles }]       
+       [{ -B | --build }]       
        [{ -Y | --synchronize }]
+       { -D | --destination } {<dot_zip_file> | <directory>}
        [{ -R | --root } <root_directory>]
        [{ -P | --platform } <comma_separated_platform_list>]
        <dot_product_file>       
@@ -19,14 +21,17 @@ usage: exportproduct
   Include source code.
 --cycles
   Allow binary cycles.
- -D
---destination [<dot_zip_file> |  <directory>]
-  The destination of the export artefact, 
-  either an archive (.zip extension) or a directory (no extension) name.
+ -B
+--build
+  Build separately. Don't use class files compiled in the workspace.   
  -Y
 --synchronize
   Synchronize product configuration with the plugin's defining plug-in 
   (ensures that the plug-in does not contain stale data).
+ -D
+--destination [<dot_zip_file> |  <directory>]
+  The destination of the export artefact, 
+  either an archive (.zip extension) or a directory (no extension) name.
  -R
 --root
   Sets the root of the output directory. Defaults to 'eclipse'.   

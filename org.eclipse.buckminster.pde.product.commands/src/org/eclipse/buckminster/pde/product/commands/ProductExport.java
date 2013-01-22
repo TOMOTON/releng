@@ -39,6 +39,8 @@ public class ProductExport extends WorkspaceCommand {
 	
 	static private final OptionDescriptor OPTION_SYNCHRONIZE = new OptionDescriptor('Y', "synchronize", OptionValueType.NONE);
 	
+	static private final OptionDescriptor OPTION_BUILD = new OptionDescriptor('B', "build", OptionValueType.NONE);
+	
 	static private final OptionDescriptor OPTION_ROOT = new OptionDescriptor('R', "root", OptionValueType.OPTIONAL);
 
 	static private final OptionDescriptor OPTION_PLATFORM =	new OptionDescriptor('P', "platform", OptionValueType.OPTIONAL);
@@ -51,10 +53,59 @@ public class ProductExport extends WorkspaceCommand {
 	private boolean archive = false;
 	private boolean synchronize = false;
 	private boolean allowBinaryCycles = false;
+	private boolean build = false;	
 	private String root = "eclipse";		
 	private String productFileName;
 	private String[][] targets;
 	
+	public boolean isExportSource() {
+		return exportSource;
+	}
+
+	public void setExportSource(boolean exportSource) {
+		this.exportSource = exportSource;
+	}
+
+	public boolean isSynchronize() {
+		return synchronize;
+	}
+
+	public void setSynchronize(boolean synchronize) {
+		this.synchronize = synchronize;
+	}
+
+	public boolean isAllowBinaryCycles() {
+		return allowBinaryCycles;
+	}
+
+	public void setAllowBinaryCycles(boolean allowBinaryCycles) {
+		this.allowBinaryCycles = allowBinaryCycles;
+	}
+
+	public boolean isBuild() {
+		return build;
+	}
+
+	public void setBuild(boolean build) {
+		this.build = build;
+	}
+
+	public String getRoot() {
+		return root;
+	}
+
+	public void setRoot(String root) {
+		this.root = root;
+	}
+
+	public String[][] getTargets() {
+		return targets;
+	}
+
+	public void setTargets(String[][] targets) {
+		this.targets = targets;
+	}
+
 	public String getProductFileName() {
 		return productFileName;
 	}
@@ -83,7 +134,8 @@ public class ProductExport extends WorkspaceCommand {
 	protected void getOptionDescriptors(List<OptionDescriptor> appendHere) throws Exception {	
 		super.getOptionDescriptors(appendHere);
 		appendHere.add(OPTION_SOURCE);
-		appendHere.add(OPTION_CYCLES);		
+		appendHere.add(OPTION_CYCLES);
+		appendHere.add(OPTION_BUILD);			
 		appendHere.add(OPTION_DESTINATION);
 		appendHere.add(OPTION_SYNCHRONIZE);		
 		appendHere.add(OPTION_ROOT);
@@ -93,25 +145,30 @@ public class ProductExport extends WorkspaceCommand {
 	@Override
 	protected void handleOption(Option option) throws Exception	{
 		if(option.is(OPTION_SOURCE)) {
-			exportSource = true;		
+			setExportSource(true);		
 		} else
 		if(option.is(OPTION_CYCLES)) {
-			allowBinaryCycles = true;		
-		} else			
+			setAllowBinaryCycles(true);		
+		} else
+		if(option.is(OPTION_BUILD)) {
+			setBuild(true);		
+		} else					
 		if(option.is(OPTION_DESTINATION)) {
-			setDestination(option.getValue());
-			if(destination.endsWith(".zip"))
-					setArchive(true);
+			String value = option.getValue();
+			setDestination(value);
+			if(value.endsWith(".zip")) {
+				setArchive(true);
+			}
 		} else
 		if(option.is(OPTION_SYNCHRONIZE)) {
-			synchronize = true;
-		} else
+			setSynchronize(true);
+		} else			
 		if(option.is(OPTION_ROOT)) {
-			root = option.getValue(); 
+			setRoot(option.getValue()); 
 		} else
 		if(option.is(OPTION_PLATFORM)) {
 			String[] platforms = option.getValue().split(",");
-			targets = ListPlatforms.getTargets(platforms);
+			setTargets(ListPlatforms.getTargets(platforms));
 		} else
 			super.handleOption(option);
 	}
@@ -179,7 +236,8 @@ public class ProductExport extends WorkspaceCommand {
 		catch (CoreException e) {
 			throw new SimpleErrorExitException("The product model could not be loaded, possibly corrupt?");		
 		}
-//		if (m_synchronize) {
+		if (isSynchronize()) {
+			System.err.println("Synchronize not implemented.");
 //			try {
 //				monitor.subTask("Synchronizing product");
 //				SynchronizationOperation operation = new SynchronizationOperation(m_productModel.getProduct(), null, product_file.getProject());
@@ -189,82 +247,28 @@ public class ProductExport extends WorkspaceCommand {
 //			} catch (InterruptedException e) {
 //				throw new SimpleErrorExitException("Product synchronization interrupted!");
 //			}
-//		}		
+		}		
 	}
 
 	private void buildExportInfo() throws SimpleErrorExitException {
 		featureExportInfo = new FeatureExportInfo();
-		featureExportInfo.toDirectory = !archive;
-		featureExportInfo.exportSource = exportSource;
+		featureExportInfo.toDirectory = !isArchive();
+		featureExportInfo.exportSource = isExportSource();
 		//featureExportInfo.exportSourceBundles = exportSourceBundles;
-		featureExportInfo.allowBinaryCycles = allowBinaryCycles;
-		Path path = new Path(destination);
-		if(!path.isValidPath(destination))
+		featureExportInfo.allowBinaryCycles = isAllowBinaryCycles();
+		featureExportInfo.useWorkspaceCompiledClasses = !isBuild();
+		Path path = new Path(getDestination());
+		if(!path.isValidPath(getDestination()))
 			throw new SimpleErrorExitException("Invalid destination path!");
-		featureExportInfo.destinationDirectory = archive ? PathUtil.extractPath(path) : destination;
+		featureExportInfo.destinationDirectory = isArchive() ? PathUtil.extractPath(path) : getDestination();
 		//! System.err.println("m_info.destinationDirectory = '" + m_info.destinationDirectory + "'");
-		featureExportInfo.zipFileName = archive ? PathUtil.extractFileName(path) : null;
-		featureExportInfo.targets = targets;
+		featureExportInfo.zipFileName = isArchive() ? PathUtil.extractFileName(path) : null;
+		featureExportInfo.targets = getTargets();
 		if (productModel.getProduct().useFeatures())
 			featureExportInfo.items = getFeatureModels();
 		else
 			featureExportInfo.items = getPluginModels();
 	}
-	
-		
-//	private IFeatureModel[] getFeatureModels() {
-//		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
-//		FeatureModelManager manager = PDECore.getDefault()
-//				.getFeatureModelManager();
-//		IProductFeature[] features = m_productModel.getProduct().getFeatures();
-//		for (int i = 0; i < features.length; i++) {
-//			IFeatureModel model = manager.findFeatureModel(features[i].getId(),
-//					features[i].getVersion());
-//			if (model != null)
-//				list.add(model);
-//		}
-//		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
-//	}
-//
-//	private BundleDescription[] getPluginModels() {
-//		ArrayList<BundleDescription> list = new ArrayList<BundleDescription>();
-//		//State state = TargetPlatform..getState();
-//		IProductPlugin[] plugins = m_productModel.getProduct().getPlugins();
-//		for (int i = 0; i < plugins.length; i++) {
-//			BundleDescription bundle = state.getBundle(plugins[i].getId(), null);
-//			if (bundle != null)
-//				list.add(bundle);
-//		}
-//		return (BundleDescription[]) list.toArray(new BundleDescription[list.size()]);
-//	}
-	
-	//--- new and improved
-	
-//	protected void scheduleExportJob() {
-//		FeatureExportInfo info = new FeatureExportInfo();
-//		info.toDirectory = fPage.doExportToDirectory();
-//		info.exportSource = fPage.doExportSource();
-//		info.exportSourceBundle = fPage.doExportSourceBundles();
-//		info.allowBinaryCycles = fPage.doBinaryCycles();
-//		info.exportMetadata = fPage.doExportMetadata();
-//		info.destinationDirectory = fPage.getDestination();
-//		info.zipFileName = fPage.getFileName();
-//		if (fPage2 != null && fPage.doMultiPlatform())
-//			info.targets = fPage2.getTargets();
-//		if (fProductModel.getProduct().useFeatures())
-//			info.items = getFeatureModels();
-//		else
-//			info.items = getPluginModels();
-//
-//		String rootDirectory = fPage.getRootDirectory();
-//		if ("".equals(rootDirectory.trim())) //$NON-NLS-1$
-//			rootDirectory = "."; //$NON-NLS-1$
-//		ProductExportOperation job = new ProductExportOperation(info, PDEUIMessages.ProductExportJob_name, m_productModel.getProduct(), rootDirectory);
-//		job.setUser(true);
-//		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
-//		job.schedule();
-//		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);
-//	}
 
 	private IFeatureModel[] getFeatureModels() {
 		ArrayList list = new ArrayList();
