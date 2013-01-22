@@ -29,11 +29,11 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.pde.team.SimpleVersionMetadata;
-import org.eclipse.pde.team.VersionMetadata;
-import org.eclipse.pde.team.VersionMetadataProvider;
+import org.eclipse.pde.team.IVersionMetadata;
+import org.eclipse.pde.team.IVersionMetadataProvider;
 import org.eclipse.team.core.RepositoryProvider;
 
-public class EGitVersionMetadataProvider implements VersionMetadataProvider {
+public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
 	
 	private static final String ORG_ECLIPSE_PDE_TEAM = "org.eclipse.pde.team";
 
@@ -69,8 +69,8 @@ public class EGitVersionMetadataProvider implements VersionMetadataProvider {
 	}
 	
 	@Override
-	public VersionMetadata getVersionMetadata(IProject project) {
-		VersionMetadata result = null;
+	public IVersionMetadata getVersionMetadata(IProject project) {
+		IVersionMetadata result = null;
 		RepositoryProvider provider = RepositoryProvider.getProvider(project);
 		if (provider != null || provider instanceof GitProvider) {
 			GitProvider gitProvider = (GitProvider) provider;
@@ -80,7 +80,7 @@ public class EGitVersionMetadataProvider implements VersionMetadataProvider {
 				throw new UnsupportedOperationException();
 			} else {
 				repositoryDir = new File(project.getLocation().toFile(), gitDir);
-				repositoryDir = new File("D:\\GitHub\\releng\\.git");
+				//repositoryDir = new File("D:\\GitHub\\releng\\.git");
 			}
 			try {
 	        	FileRepositoryBuilder builder = new FileRepositoryBuilder();
