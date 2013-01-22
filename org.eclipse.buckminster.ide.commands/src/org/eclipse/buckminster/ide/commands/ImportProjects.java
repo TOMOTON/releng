@@ -11,13 +11,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.buckminster.cmdline.Option;
 import org.eclipse.buckminster.cmdline.OptionDescriptor;
 import org.eclipse.buckminster.cmdline.OptionValueType;
 import org.eclipse.buckminster.cmdline.SimpleErrorExitException;
 import org.eclipse.buckminster.core.commands.WorkspaceCommand;
-import org.eclipse.buckminster.core.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -40,10 +40,16 @@ public class ImportProjects extends WorkspaceCommand {
 	static private final OptionDescriptor OPTION_COPY =	new OptionDescriptor('C', "copy", OptionValueType.NONE);
 
 	static private final OptionDescriptor OPTION_OVERWRITE = new OptionDescriptor('O', "overwrite", OptionValueType.NONE);
+
+	static private final OptionDescriptor OPTION_INCLUDE = new OptionDescriptor('I', "include", OptionValueType.REQUIRED);
+	
+	static private final OptionDescriptor OPTION_EXCLUDE = new OptionDescriptor('E', "exclude", OptionValueType.REQUIRED);
 	
 	protected String sourceDirectory;
 	protected boolean copy = false;
 	protected boolean overwrite = false;
+	protected Pattern[] includes;
+	protected Pattern[] excludes;
 	
 	public String getSourceDirectory() {
 		return sourceDirectory;
@@ -69,11 +75,29 @@ public class ImportProjects extends WorkspaceCommand {
 		this.overwrite = overwrite;
 	}
 
+	public Pattern[] getIncludes() {
+		return includes;
+	}
+
+	public void setIncludes(Pattern[] includes) {
+		this.includes = includes;
+	}
+
+	public Pattern[] getExcludes() {
+		return excludes;
+	}
+
+	public void setExcludes(Pattern[] excludes) {
+		this.excludes = excludes;
+	}
+
 	@Override
 	protected void getOptionDescriptors(List<OptionDescriptor> appendHere) throws Exception {
 		super.getOptionDescriptors(appendHere);
 		appendHere.add(OPTION_COPY);
 		appendHere.add(OPTION_OVERWRITE);
+		appendHere.add(OPTION_INCLUDE);
+		appendHere.add(OPTION_EXCLUDE);		
 	}
 
 	@Override
@@ -84,7 +108,26 @@ public class ImportProjects extends WorkspaceCommand {
 		if (option.is(OPTION_OVERWRITE))
 			setOverwrite(true);
 		else
+		if (option.is(OPTION_INCLUDE)) {
+			String[] parts = option.getValue().split(",");
+			includes = new Pattern[parts.length];
+			for(int i = 0; i < parts.length; i++) {
+				includes[i] = Pattern.compile(asRegEx(parts[i]));
+			}
+		} else 
+		if (option.is(OPTION_EXCLUDE)) {
+			String[] parts = option.getValue().split(",");
+			excludes = new Pattern[parts.length];
+			for(int i = 0; i < parts.length; i++) {
+				excludes[i] = Pattern.compile(asRegEx(parts[i]));
+			}
+		} else
 			super.handleOption(option);
+	}
+	
+	private String asRegEx(String pattern) {
+		pattern = pattern.replaceAll("\\*", ".*");
+		return "^" + pattern + "$";
 	}
 
 	@Override
@@ -98,26 +141,81 @@ public class ImportProjects extends WorkspaceCommand {
 
 	@Override
 	protected int internalRun(IProgressMonitor monitor) throws Exception {
-		monitor.beginTask("Importing projects...", 4);
 		if(sourceDirectory == null)
 			throw new SimpleErrorExitException("Source directory argument missing.");
+		monitor.beginTask("Importing projects...", 4);		
 		File directory = new File(sourceDirectory);	
 		if(!directory.isDirectory())
 			throw new SimpleErrorExitException("Path '" + sourceDirectory + "' is not a directory.");		
 		// Enumerate and import.
 		List<ProjectRecord> projectRecordList = enumerateProjectsRecordsFrom(directory, new SubProgressMonitor(monitor, 1));
 		monitor.worked(1);
+		filterProjects(projectRecordList);
 		createProjects(projectRecordList, new SubProgressMonitor(monitor, projectRecordList.size()));
+		if(copy) {
+			System.err.println("Copy not implemented.");
+		}
 		monitor.worked(1);
 		// Refresh and save workspace.		
 		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		ResourcesPlugin.getWorkspace().save(true, monitor);
 		monitor.worked(1);
 		outReport(projectRecordList);
-		monitor.done();
+		monitor.done();		
 		return 0;
 	}
 	
+	private void filterProjects(List<ProjectRecord> projectRecordList) {
+		if(includes != null) {
+			ProjectRecord[] projectRecords = projectRecordList.toArray(new ProjectRecord[projectRecordList.size()]);
+			for(ProjectRecord projectRecord: projectRecords) {				
+				boolean included = false;
+				for(Pattern include: includes) {
+					if(include.matcher(projectRecord.getProjectName()).matches()) {
+						included = true;
+						break;
+					}
+				}
+				if(!included) {
+					projectRecordList.remove(projectRecord);
+				}
+			}
+		}
+		if(excludes != null) {
+			ProjectRecord[] projectRecords = projectRecordList.toArray(new ProjectRecord[projectRecordList.size()]);
+			for(ProjectRecord projectRecord: projectRecords) {
+				for(Pattern exclude: excludes) {
+					if(exclude.matcher(projectRecord.getProjectName()).matches()) {
+						projectRecordList.remove(projectRecord);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		try {
+			List<ProjectRecord> projectRecordList = new ArrayList<ProjectRecord>();
+			ProjectRecord projectRecord1 = new ProjectRecord("ch.ringler.a.b.c");
+			ProjectRecord projectRecord2 = new ProjectRecord("ch.ringler.x.z");
+			ProjectRecord projectRecord3 = new ProjectRecord("com.riag");
+			projectRecordList.add(projectRecord1);
+			projectRecordList.add(projectRecord2);
+			projectRecordList.add(projectRecord3);
+			ImportProjects instance = new ImportProjects();
+			instance.setIncludes(new Pattern[] { Pattern.compile(instance.asRegEx("ch.ringler.*")) });
+			instance.setExcludes(new Pattern[] { Pattern.compile(instance.asRegEx("*.x.z")) });
+			instance.filterProjects(projectRecordList);
+			System.err.println("LEFT " + projectRecordList.size());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void outReport(List<ProjectRecord> projectRecordList) {
 		System.out.println("Imported projects from '" + sourceDirectory + "':");
 		String[] names = new String[projectRecordList.size()];
@@ -202,7 +300,7 @@ public class ImportProjects extends WorkspaceCommand {
 		}
 		// import from file system
 //		File importSource = null;
-//		if (m_copy) {
+//		if (copy) {
 //			// import project from location copying files - use default project
 //			// location for this workspace
 //			URI locationURI = record.description.getLocationURI();
@@ -240,7 +338,7 @@ public class ImportProjects extends WorkspaceCommand {
 			//monitor.done();
 		}
 		// import operation to import project files if copy checkbox is selected
-//		if (m_copy && importSource != null) {
+//		if (copy && importSource != null) {
 //			List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
 //			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, this, filesToImport);
 //			operation.setContext(getShell());
@@ -306,7 +404,7 @@ public class ImportProjects extends WorkspaceCommand {
 		NEW, IMPORTED, OVERWRITTEN, IGNORED;
 	}
 	
-	private class ProjectRecord {
+	private static class ProjectRecord {
 		
 		private File projectSystemFile;
 
@@ -315,6 +413,10 @@ public class ImportProjects extends WorkspaceCommand {
 		private ImportState state = ImportState.NEW;
 		
 		private IProjectDescription description;
+		
+		ProjectRecord(String projectName) {
+			this.projectName = projectName;
+		}
 
 		/**
 		 * Create a record for a project based on the info in the file.
@@ -383,5 +485,7 @@ public class ImportProjects extends WorkspaceCommand {
 		}
 		
 	}
+	
+	
 	
 }

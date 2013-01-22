@@ -1,0 +1,8 @@
+Lists the natures which have been registered for the platform.
+
+usage: listnatures
+       [{ -? | --help }]
+
+ -?
+--help
+  Show this help text

@@ -21,5 +21,23 @@
                name="lsws">
          </alias>
       </command>
+      <command
+            addhelpflags="true"
+            class="org.eclipse.buckminster.ide.commands.ToggleNature"
+            name="togglenature"
+            status="NORMAL">
+         <alias
+               name="tlnat">
+         </alias>
+      </command>
+      <command
+            addhelpflags="true"
+            class="org.eclipse.buckminster.ide.commands.ListNatures"
+            name="listnatures"
+            status="NORMAL">
+         <alias
+               name="lsnat">
+         </alias>
+      </command>
    </extension>
 </plugin>

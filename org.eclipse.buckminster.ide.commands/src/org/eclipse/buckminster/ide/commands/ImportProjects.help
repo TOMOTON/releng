@@ -3,19 +3,26 @@ Imports the projects contained in a directory into the current workspace
 usage: importprojects
        [{-C | --copy}]
        [{-O | --overwrite}]
+       [{-I | --include} <comma-separated project names>]       
+       [{-E | --exclude} <comma-separated project names>]
        [{ -? | --help }]
        <path>
  -?
 --help
   Show this help text
-
 -C
 --copy
-Copy the projects to the current workspace.
-
+  Copy the projects to the current workspace.
 -O
 --overwrite
-Overwrite existing projects in the workspace in case of a naming collision.
-
+  Overwrite existing projects in the workspace in case of a naming collision.
+-I
+--include <comma-separated project names>
+  Include project names. Wildcard * characters are allowed, yet whitespace are not.
+  (e.g. org.buckminster.*,*.eclipse)
+-E
+--exclude <comma-separated project names>
+  Exclude project names. Wildcard * characters are allowed, yet whitespace are not.
+  (e.g. org.buckminster.*,*.eclipse)  
 <path or URI>
-The path that appoints the import directory.
+  The path that appoints the import directory.
