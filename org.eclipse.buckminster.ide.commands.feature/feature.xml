@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.buckminster.ide.command.feature"
+      id="org.eclipse.buckminster.ide.commands"
       label="IDE Commands Feature"
       version="0.9.0.qualifier">
 
