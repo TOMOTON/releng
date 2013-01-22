@@ -1,38 +1,40 @@
 This command compiles a GWT module.
 
-The export is based on a eclipse .product definition file.
+Compilation is invoked in a manner similar to the Google Eclipse Plug-in.
 
 usage: gwtcompile
        [{ -? | --help }]
-       [{ -S | --source }]
-       { -D | --destination } {<dot_zip_file> | <directory>}
-       [{ -Y | --synchronize }]
-       [{ -R | --root } <root_directory>]
-       [{ -P | --platform } <comma_separated_platform_list>]
-       <dot_product_file>       
+       [{ -L | --logLevel } ERROR | WARN | INFO | TRACE | DEBUG | SPAM  | ALL ]
+       [{ -O | --outputStyle }  OBFUSCATED | PRETTY | DETAILED ]
+       [{ -S | --strict} true | false ]
+       [{ -D | --deploy } <deploy_directory>]
+       [{ -E | --extra } <extra_directory>]
+       [{ -G | --gwt } <sdk_version>]                  
+       { -P | --project } <project_name>]
+       <modules(s)>       
 
  -?
 --help
   Show this help text.
+ -L
+--logLevel ERROR | WARN | INFO | TRACE | DEBUG | SPAM  | ALL
+  Set compilation log level. Defaults to 'INFO'.
+ -O
+--outputStyle  OBFUSCATED | PRETTY | DETAILED 
+  The Java-to-JavaScript compilation style. Defaults to 'OBFUSCATED'.
  -S
---source
-  Include source code.
---cycles
-  Allow binary cycles.
+--strict Only succeed if no input files have errors. Defaults to true.
  -D
---destination [<dot_zip_file> |  <directory>]
-  The destination of the export artefact, 
-  either an archive (.zip extension) or a directory (no extension) name.
- -Y
---synchronize
-  Synchronize product configuration with the plugin's defining plug-in 
-  (ensures that the plug-in does not contain stale data).
- -R
---root
-  Sets the root of the output directory. Defaults to 'eclipse'.   
+--deploy <deploy_directory>
+  The directory into which deployable but not servable output files will be written (defaults to 'WEB-INF/deploy' under the -war directory). 
+ -E
+--extra <extra_directory>
+  The directory into which extra files, not intended for deployment, will be written.
+ -G
+--gwt <sdk_version>
+  The GWT SDK id as specified in the SDK bundle registrant properties (e.g. '2.5.0'). Defaults to most recent SDK.
  -P
---platform <comma_separated_platform_list> 
-  Specifies export to multiple platforms; e.g. win32:win32/x86,linux:gtk/ppc
-<dot_product_file>
-  The full workspace path to a .product file 
-  (e.g. org.buckminster.eclipse/buckminster.product).
+--project <project_name> 
+  The full workspace path to the target project which has a GWT nature.
+<module(s)>
+  The list (at least one) of modules which need to be compiled.
