@@ -13,11 +13,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.team.IVersionUpdater;
+import org.osgi.framework.Version;
 
+@SuppressWarnings("restriction")
 public class ManifestUpdater implements IVersionUpdater {
 
 	@Override
-	public void update(IFile manifestFile, String version, IProgressMonitor monitor) throws CoreException {
+	public void update(IFile manifestFile, Version version, IProgressMonitor monitor) throws CoreException {			
 		if(version == null)
 			throw new NullPointerException("Version cannot be undefined!");
 		InputStream in = manifestFile.getContents();
@@ -31,7 +33,7 @@ public class ManifestUpdater implements IVersionUpdater {
 			while((line = reader.readLine()) != null) {
 				if(line.startsWith("Bundle-Version")) {
 					content.write("Bundle-Version: ".getBytes(charset));
-					content.write(version.getBytes(charset));						
+					content.write(version.toString().getBytes(charset));						
 				} else {
 					content.write(line.getBytes(charset));	
 				}

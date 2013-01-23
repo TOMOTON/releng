@@ -6,7 +6,7 @@ public class MainlineInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		System.err.println("###### MAINLINE INITIALIZER ######");
+		//? Put preferences here: define how git signatures are interpreted.
 	}
 
 }

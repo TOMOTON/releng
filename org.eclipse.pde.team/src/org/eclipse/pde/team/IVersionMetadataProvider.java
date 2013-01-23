@@ -6,6 +6,8 @@ public interface IVersionMetadataProvider {
 
 	IVersionMetadata getVersionMetadata(IProject project);
 	
+	IVersionMetadata getVersionMetadataBlind(IProject project);
+	
 	String getTeamProviderID();
 	
 }
