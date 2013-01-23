@@ -192,12 +192,12 @@ public class ProductExport extends WorkspaceCommand {
 		monitor.subTask("Preparing product export");
 		//-
 		monitor.subTask("Checking product model");
-		System.err.println("performPreliminaryChecks");
+		System.out.println("Checking product model");
 		performPreliminaryChecks(monitor);
 		monitor.worked(1);
 		//-
 		monitor.subTask("Building export info");
-		System.err.println("buildExportInfo");
+		System.out.println("Building export info");
 		buildExportInfo();		
 		monitor.worked(1);
 		//-
@@ -205,8 +205,8 @@ public class ProductExport extends WorkspaceCommand {
 		if ("".equals(root.trim()))
 			root = ".";
 		try {
-			System.err.println("Exporting");
-			monitor.subTask("Performing actual export");
+			monitor.subTask("Exporting...");
+			System.out.println("Exporting...");			
 			ProductExportOperation operation = new ProductExportOperation(featureExportInfo, "Exporting product...", productModel.getProduct(), root);
 			operation.setProgressGroup(monitor, 1);
 			operation.setUser(true);
@@ -217,17 +217,15 @@ public class ProductExport extends WorkspaceCommand {
 		finally {
 			monitor.done();
 		}
-
 		return 0;		
 	}
 	
 	protected void performPreliminaryChecks(IProgressMonitor monitor) throws SimpleErrorExitException {		
 		IFile productFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(productFileName));
-		System.err.println("Product file is " + productFile);
 		if(productFile != null)
-			System.err.println(" inside " + productFile.getLocation().toOSString());
-		productModel = new WorkspaceProductModel(productFile, false);
+			System.err.println("Product file is " + productFile.getLocation().toOSString());
 		try {
+			productModel = new WorkspaceProductModel(productFile, false);			
 			productModel.load();
 			if (!productModel.isLoaded()) {
 				throw new SimpleErrorExitException("The product model could not be loaded, possibly corrupt?");

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.buckminster.pde.product.commands"
-      label="PDE Product Export"
+      id="org.eclipse.buckminster.pde.export.headless.feature"
+      label="Buckminster - PDE Export Headless"
       version="0.9.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -17,7 +17,7 @@
    </license>
 
    <plugin
-         id="org.eclipse.buckminster.pde.product.commands"
+         id="org.eclipse.buckminster.pde.export"
          download-size="0"
          install-size="0"
          version="0.0.0"
