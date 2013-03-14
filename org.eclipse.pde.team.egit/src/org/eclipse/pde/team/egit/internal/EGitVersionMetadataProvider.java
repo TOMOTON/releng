@@ -54,19 +54,13 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
 		
 		private int distance;
 		
-		private int abbrev;
-
-		public TagMeta(String name, int distance, int abbrev) {
+		public TagMeta(String name, int distance) {
 			this.name = name;
 			this.distance = distance;
-			this.abbrev = abbrev;
 		}
 
 		public String getName() {
-			if(abbrev <= name.length()) {
-				return name.substring(0, abbrev);
-			} else
-				return name;
+			return name;
 		}
 
 		public int getDistance() {
@@ -104,6 +98,14 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
 		return result;
 	}
 
+	private String abbrev(String name, int length) {
+		if(length <= name.length()) {
+			return name.substring(0, length);
+		} else
+			return name;
+
+	}
+	
 	private IVersionMetadata getVersionMetadata(File repositoryDir) {
 		IVersionMetadata result = null;
 		try {
@@ -114,15 +116,16 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
         	  .build();
         	String configuredRemote = Platform.getPreferencesService().getString(ORG_ECLIPSE_PDE_TEAM_EGIT, REMOTE, ORIGIN, ANY_SCOPE);
         	ObjectId head = repository.resolve(Constants.HEAD);
-        	TagMeta tag = describeTag(repository, head, 7);
+        	TagMeta tag = describeTag(repository, head);
+        	String headName = abbrev(head.getName(), 7);
         	if(tag == null) { //? We're not on a tag.
         		String remoteName = "refs/remotes/" + configuredRemote + "/" + repository.getBranch();
-        		result = new SimpleVersionMetadata("g" + head.getName(), isMostRecent(repository, head, remoteName), repository.getBranch(), null);
+        		result = new SimpleVersionMetadata("g" + headName, isMostRecent(repository, head, remoteName), repository.getBranch(), null);
         	} else {	        		
         		if(tag.getDistance() == 0) {
-        			result = new SimpleVersionMetadata("g" + head.getName(), true, null, tag.getName());
+        			result = new SimpleVersionMetadata("g" + headName, true, null, tag.getName());
         		} else {
-        			result = new SimpleVersionMetadata(tag.getDistance() + "-g" + head.getName(), false, null, tag.getName()); //? Should distance be part of the tag?
+        			result = new SimpleVersionMetadata(tag.getDistance() + "-g" + headName, false, null, tag.getName()); //? Should distance be part of the tag?
         		}
         	}
 		} catch (Exception e) {
@@ -145,7 +148,7 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
 		return result;
 	}
 	
-	private TagMeta describeTag(Repository repository, ObjectId objectId, int shalength) throws NoHeadException, JGitInternalException {
+	private TagMeta describeTag(Repository repository, ObjectId objectId) throws NoHeadException, JGitInternalException {
         RevWalk walk = null;
         RevCommit start = null;
         try {
@@ -179,7 +182,7 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
             }
         }
         if(best != null) {
-            return new TagMeta(tags.get(best.getId()), bestDistance, shalength);
+            return new TagMeta(tags.get(best.getId()), bestDistance);
         } else {
         	return null;
         }
