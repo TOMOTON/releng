@@ -26,6 +26,15 @@
                name="incld">
          </alias>
       </command>
+      <command
+            addhelpflags="true"
+            class="org.eclipse.buckminster.pde.product.commands.FeatureExport"
+            name="exportfeature"
+            status="NORMAL">
+         <alias
+               name="xfea">
+         </alias>
+      </command>
    </extension>
 
 </plugin>
