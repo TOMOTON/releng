@@ -53,14 +53,20 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
 		private String name;
 		
 		private int distance;
+		
+		private int abbrev;
 
-		public TagMeta(String name, int distance) {
+		public TagMeta(String name, int distance, int abbrev) {
 			this.name = name;
 			this.distance = distance;
+			this.abbrev = abbrev;
 		}
 
 		public String getName() {
-			return name;
+			if(abbrev <= name.length()) {
+				return name.substring(0, abbrev);
+			} else
+				return name;
 		}
 
 		public int getDistance() {
@@ -173,7 +179,7 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
             }
         }
         if(best != null) {
-            return new TagMeta(tags.get(best.getId()), bestDistance);
+            return new TagMeta(tags.get(best.getId()), bestDistance, shalength);
         } else {
         	return null;
         }

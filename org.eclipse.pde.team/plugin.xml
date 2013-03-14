@@ -46,5 +46,12 @@
             contentTypeId="org.eclipse.pde.productFile">
       </updater>
    </extension>
+   <extension
+         point="org.eclipse.pde.team.resourceVersionUpdater">
+      <updater
+            class="org.eclipse.pde.team.internal.FeatureUpdater"
+            contentTypeId="org.eclipse.pde.featureManifest">
+      </updater>
+   </extension>
 
 </plugin>
