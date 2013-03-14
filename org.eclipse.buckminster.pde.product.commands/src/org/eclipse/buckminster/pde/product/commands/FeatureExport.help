@@ -15,7 +15,7 @@ usage: exportfeature
        [{ -Q | --qualifier } <qualifier>]  
        [{ -R | --root } <root_directory>]
        { -D | --destination } {<dot_zip_file> | <directory>}
-       <feature_manifest>       
+       <feature_id>+       
 
  -?
 --help
@@ -57,7 +57,7 @@ usage: exportfeature
 --destination [<dot_zip_file> | <directory>]
   The destination of the export artefact, 
   either an archive (.zip extension) or a directory (no extension) name.  
-<feature_manifest>
-  The full workspace path to a feature manifest 
-  (e.g. org.buckminster.eclipse/feature.xml).
+<feature_id>+
+  The feature id(s) as found in the workspace (list multiple if needed) 
+  (e.g. org.buckminster.eclipse.feature).
 	

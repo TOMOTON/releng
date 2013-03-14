@@ -210,18 +210,16 @@ public class FeatureExport extends WorkspaceCommand {
 		monitor.subTask("Preparing product export");
 		//-
 		monitor.subTask("Checking product model");
-		System.err.println("performPreliminaryChecks");
 		performPreliminaryChecks(monitor);
 		monitor.worked(1);
 		//-
 		monitor.subTask("Building export info");
-		System.err.println("buildExportInfo");
 		buildExportInfo();		
 		monitor.worked(1);
 		//-
 		try {
-			System.err.println("Exporting");
-			monitor.subTask("Performing actual export");
+			monitor.subTask("Exporting...");		
+			System.out.println("Exporting...");
 			FeatureExportOperation operation = new FeatureExportOperation(featureExportInfo, "Exporting feature...");
 			operation.setProgressGroup(monitor, 1);
 			operation.setUser(true);
@@ -241,7 +239,7 @@ public class FeatureExport extends WorkspaceCommand {
 		for(IFeatureModel featureModel: featureModels) {
 			IResource resource = featureModel.getUnderlyingResource();
 			String featureId = featureModel.getFeature().getId();
-			System.err.println("Feature " + featureId + " came from " + resource.getName());
+			System.out.println("Feature " + featureId + " came from " + resource.getFullPath().toPortableString());
 			featureIdSet.remove(featureId);
 		}		
 		if(!featureIdSet.isEmpty()) {
