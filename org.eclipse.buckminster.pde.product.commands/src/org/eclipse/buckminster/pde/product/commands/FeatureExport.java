@@ -14,6 +14,7 @@ import org.eclipse.buckminster.core.commands.WorkspaceCommand;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -225,7 +226,12 @@ public class FeatureExport extends WorkspaceCommand {
 			operation.setUser(true);
 			operation.setRule(ResourcesPlugin.getWorkspace().getRoot());
 			operation.schedule();			
-			operation.join();
+			operation.join();			
+			IStatus result = operation.getResult();
+			if(!result.isOK()) {
+				System.err.println("Operation resulted in " + result + '!');
+				return 1;
+			}			
 		}
 		finally {
 			monitor.done();

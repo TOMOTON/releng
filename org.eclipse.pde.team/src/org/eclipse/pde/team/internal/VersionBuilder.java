@@ -195,7 +195,7 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 						blind = true;
 					}
 					if(version != null) {
-						System.out.println("Updating " + file.getFullPath().toOSString() + " to version " + version + (blind ? " (blind)" : ""));
+						System.out.println("Updating " + file.getFullPath().toPortableString() + " to version " + version + (blind ? " (blind)" : ""));
 						updater.update(file, version, monitor);
 					}
 				} 

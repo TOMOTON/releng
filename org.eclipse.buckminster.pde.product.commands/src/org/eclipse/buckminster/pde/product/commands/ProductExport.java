@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -213,6 +214,11 @@ public class ProductExport extends WorkspaceCommand {
 			operation.setRule(ResourcesPlugin.getWorkspace().getRoot());
 			operation.schedule();			
 			operation.join();
+			IStatus result = operation.getResult();
+			if(!result.isOK()) {
+				System.err.println("Operation resulted in " + result + '!');
+				return 1;
+			}
 		}
 		finally {
 			monitor.done();
