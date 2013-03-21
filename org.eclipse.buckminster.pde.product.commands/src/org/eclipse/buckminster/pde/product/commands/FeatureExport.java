@@ -1,5 +1,7 @@
 package org.eclipse.buckminster.pde.product.commands;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
@@ -56,7 +59,8 @@ public class FeatureExport extends WorkspaceCommand {
 	private String[][] targets;
 	private String category;
 	private String[] featureIds;
-
+	
+	private URI categoryDefinition;
 	
 	public ExportType getExportSource() {
 		return exportSource;
@@ -206,7 +210,18 @@ public class FeatureExport extends WorkspaceCommand {
 		if(featureIds.length == 0)
 			throw new SimpleErrorExitException("Missing feature identifier(s).");
 		if(destination == null)
-			throw new SimpleErrorExitException("Missing feature artifact destination, use --destination (-D) to a directory path or .zip file.");			
+			throw new SimpleErrorExitException("Missing feature artifact destination, use --destination (-D) to a directory path or .zip file.");
+		if(category != null) {
+			File categoryFile = new File(category);
+			if(!categoryFile.canRead()) {
+				throw new SimpleErrorExitException("Invalid category path: does it exist, is it readable?.");
+			}
+			categoryDefinition = categoryFile.toURI();
+		} else {
+			if(!(isJarFormat() && isExportMetadata())) {
+				System.err.println("Category will be ignored: --jar and --metadata required!");
+			}
+		}
 		monitor.beginTask(null, 3);
 		monitor.subTask("Preparing product export");
 		//-
@@ -256,6 +271,12 @@ public class FeatureExport extends WorkspaceCommand {
 		}
 	}
 
+	private String withCategoryDefinition() {
+		String result = URIUtil.toUnencodedString(categoryDefinition);
+		System.out.println("Category definition set to " + result);
+		return result;
+	}
+	
 	private void buildExportInfo() throws SimpleErrorExitException {
 		featureExportInfo = new FeatureExportInfo();
 		featureExportInfo.toDirectory = !isArchive();
@@ -264,7 +285,7 @@ public class FeatureExport extends WorkspaceCommand {
 		featureExportInfo.allowBinaryCycles = isAllowBinaryCycles();
 		featureExportInfo.useJarFormat = isJarFormat();
 		featureExportInfo.exportMetadata = isJarFormat() ? isExportMetadata() : false;
-		featureExportInfo.categoryDefinition = getCategory();
+		featureExportInfo.categoryDefinition = isJarFormat() && isExportMetadata() ? withCategoryDefinition() : null;
 		featureExportInfo.qualifier = getQualifier();
 		featureExportInfo.useWorkspaceCompiledClasses = !isBuild();
 		Path path = new Path(getDestination());
