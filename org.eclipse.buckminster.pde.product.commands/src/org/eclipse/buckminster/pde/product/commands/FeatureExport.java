@@ -272,6 +272,8 @@ public class FeatureExport extends WorkspaceCommand {
 	}
 
 	private String withCategoryDefinition() {
+		if (categoryDefinition == null)
+			return null;
 		String result = URIUtil.toUnencodedString(categoryDefinition);
 		System.out.println("Category definition set to " + result);
 		return result;
