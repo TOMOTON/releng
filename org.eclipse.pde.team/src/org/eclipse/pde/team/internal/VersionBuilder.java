@@ -123,6 +123,7 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 					}
 					String contentTypeId = element.getAttribute("contentTypeId");
 					if(updaterMap.putIfAbsent(contentTypeId, updater) != null) {
+						System.err.println(contentTypeId + " -> " + updater.getClass());
 						throw new IllegalStateException("Updater for content type id " + contentTypeId + " already registered!");
 					}					
 				}
@@ -184,10 +185,14 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 	
 	private void updateVersion(IResource resource, IProgressMonitor monitor) throws CoreException {
 		if(resource instanceof IFile) {
-			for(IContentType type: contentTypeManager.findContentTypesFor(resource.getName())) {
-				IVersionUpdater updater = updaterMap.get(type.getId());
+			IFile file = (IFile) resource;
+			String contentTypeId = null;
+			try {
+				contentTypeId = file.getContentDescription().getContentType().getId();
+			} catch (Exception ignore) {}
+			if(contentTypeId != null) {
+				IVersionUpdater updater = updaterMap.get(contentTypeId);
 				if(updater != null) {
-					IFile file = (IFile) resource;
 					Version version = deriveVersion(file);
 					boolean blind = false;
 					if(version == null) { //? Attempt blind resolution.
@@ -198,7 +203,7 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 						System.out.println("Updating " + file.getFullPath().toPortableString() + " to version " + version + (blind ? " (blind)" : ""));
 						updater.update(file, version, monitor);
 					}
-				} 
+				}
 			}
 		}
 	}
@@ -208,8 +213,7 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 		RepositoryProvider repositoryProvider = RepositoryProvider.getProvider(getProject());
 		if(repositoryProvider != null) {
 			result = deriveVersion(repositoryProvider.getID(), false);
-		}
-		
+		}		
 		return result;
 	}
 

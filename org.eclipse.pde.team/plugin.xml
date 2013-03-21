@@ -53,5 +53,12 @@
             contentTypeId="org.eclipse.pde.featureManifest">
       </updater>
    </extension>
+   <extension
+         point="org.eclipse.pde.team.resourceVersionUpdater">
+      <updater
+            class="org.eclipse.pde.team.internal.CategoryUpdater"
+            contentTypeId="org.eclipse.pde.categoryManifest">
+      </updater>
+   </extension>
 
 </plugin>

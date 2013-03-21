@@ -71,7 +71,6 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
         	  .build();
         	ObjectId head = repository.resolve(Constants.HEAD);
         	TagMeta tag = Describe.on(repository);
-        	System.err.println("BRANCH " + repository.getBranch());
         	String branch = repository.getBranch();
         	boolean mainline = MAINLINE.equals(branch);
         	String revisionReference = head.getName();
@@ -89,7 +88,6 @@ public class EGitVersionMetadataProvider implements IVersionMetadataProvider {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.err.println("RETURNING " + result);
 		return result;
 	}
 
