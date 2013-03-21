@@ -1,14 +1,22 @@
 package org.eclipse.pde.team;
 
+/**
+ * Version meta-data in the spirit of http://en.wikipedia.org/wiki/Revision_control.
+ * @author Dann Martens
+ */
 public class SimpleVersionMetadata implements IVersionMetadata {
 
 	private String baseline;
 	
-	private String mainline;
+	private String line;
+
+	private boolean mainline;
 	
 	private boolean mostRecent;
 	
-	private String rawVersion;
+	private String revisionReference;
+	
+	private String qualifier;
 	
 	@Override
 	public boolean isBaseline() {
@@ -16,13 +24,13 @@ public class SimpleVersionMetadata implements IVersionMetadata {
 	}
 
 	@Override
-	public String getMainline() {
-		return mainline;
+	public String getLine() {
+		return line;
 	}
 	
 	@Override
 	public boolean isMainline() {
-		return mainline != null;
+		return mainline;
 	}
 
 	@Override
@@ -30,29 +38,39 @@ public class SimpleVersionMetadata implements IVersionMetadata {
 		return baseline;
 	}
 
-
 	@Override
 	public boolean isMostRecent() {
 		return mostRecent;
 	}
 
 	@Override
-	public String getRawVersion() {
-		return rawVersion;
+	public String getRevisionReference() {
+		return revisionReference;
 	}
 
-	public SimpleVersionMetadata(String rawVersion, boolean mostRecent,	String mainline, String baseline) {
-		this.rawVersion = rawVersion;
+	@Override
+	public String getQualifier() {
+		return qualifier;
+	}
+	
+	public SimpleVersionMetadata(String revisionReference, boolean mostRecent, String line, boolean mainline, String baseline, String qualifier) {
+		this.revisionReference = revisionReference;
 		this.mostRecent = mostRecent;
+		this.line = line;
 		this.mainline = mainline;
 		this.baseline = baseline;
+		this.qualifier = qualifier;
 	}
 
 	@Override
 	public String toString() {
-		return "SimpleVersionMetadata [baseline=" + baseline + ", mainline="
-				+ mainline + ", mostRecent=" + mostRecent + ", rawVersion="
-				+ rawVersion + "]";
+		return "SimpleVersionMetadata{revisionReference=" + revisionReference
+				+ ", mostRecent=" + mostRecent
+				+ ", baseline=" + baseline
+				+ ", line="	+ line
+				+ ", isMainline="	+ mainline
+			    + ", qualifier=" + qualifier +
+			    "}";
 	}
 
 }

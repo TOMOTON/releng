@@ -24,13 +24,11 @@ public interface IVersionMetadata {
 	public boolean isMainline();
 	
 	/**
-	 * Gets the mainline.
+	 * Gets the line, if other than 'main'.
 	 * @return A <code>String</code>.
 	 */
-	public String getMainline();
-	
-	//public Version getMainLine(); ??? If this is a branch, from where?
-	
+	public String getLine();
+
 	/**
 	 * Checks if this working copy is most recent. Also known as 'tip' or
 	 * 'head'.
@@ -39,9 +37,15 @@ public interface IVersionMetadata {
 	public boolean isMostRecent();
 	
 	/**
-	 * Returns the version as a raw version.
+	 * Returns the system-specific reference version.
 	 * @return A <code>String</code>.
 	 */
-	public String getRawVersion();
+	public String getRevisionReference();
+	
+	/**
+	 * Returns
+	 * @return A <code>String</code>.
+	 */
+	public String getQualifier();
 		
 }

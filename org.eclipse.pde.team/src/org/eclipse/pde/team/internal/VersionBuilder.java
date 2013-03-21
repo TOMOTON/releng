@@ -231,18 +231,19 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 			IVersionMetadata versionMetadata = blind ? metadataProvider.getVersionMetadataBlind(getProject()) : metadataProvider.getVersionMetadata(getProject());
 			if(versionMetadata != null) {
 				if(versionMetadata.isBaseline()) {
-					result = parseVersion(versionMetadata.getBaseline());
+					result = parseVersion(versionMetadata.getBaseline()); //? This is where the convention vX.X.X is required!
 					if(!versionMetadata.isMostRecent()) { //? Append qualifier.
-						String qualifier = "".equals(result.getQualifier()) ? "" : "-";
-						qualifier += versionMetadata.getRawVersion();
+						String qualifier = versionMetadata.isMainline() ? "" : versionMetadata.getLine() + '-';
+						qualifier += versionMetadata.getQualifier();
 						result = new Version(result.getMajor(), result.getMinor(), result.getMicro(), qualifier);
 					} else { //? Fallback to 'qualifier' keyword: let PDE replace it.
 						result = new Version(result.getMajor(), result.getMinor(), result.getMicro(), "qualifier");
 					}
 				} else {
-					result = parseVersion(versionMetadata.getMainline());
+					result = parseVersion(versionMetadata.getLine());
 					if(Version.emptyVersion.equals(result)) { //? This is not a prefix1.0.0.qualfier mainline.
-						String qualifier = versionMetadata.getMainline() + '-' + versionMetadata.getRawVersion();
+						String qualifier = versionMetadata.isMainline() ? "" : versionMetadata.getLine() + '-';
+						qualifier += versionMetadata.getQualifier();
 						result = new Version(result.getMajor(), result.getMinor(), result.getMicro(), qualifier);
 					}
 				}				
@@ -258,7 +259,7 @@ public class VersionBuilder extends IncrementalProjectBuilder {
 		if(matcher.matches()) {
 			int major = Integer.parseInt(matcher.group(1));
 			int minor = Integer.parseInt(matcher.group(2));
-			int micro = Integer.parseInt	(matcher.group(3));
+			int micro = Integer.parseInt(matcher.group(3));
 			String qualifier = matcher.group(4);
 			result = new Version(major, minor, micro, qualifier);
 		} else {
