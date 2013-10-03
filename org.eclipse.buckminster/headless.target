@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Buckminster Headless" sequenceNumber="5">
+<?pde version="3.8"?><target name="Buckminster Headless" sequenceNumber="17">
 <locations>
-<location path="${eclipse_home}" type="Profile"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.buckminster.core.headless.feature.feature.group" version="1.5.0.v20130207-0721"/>
-<unit id="org.eclipse.buckminster.git.headless.feature.feature.group" version="1.5.0.v20130407-2015"/>
-<unit id="org.eclipse.buckminster.maven.headless.feature.feature.group" version="1.5.0.v20130207-0721"/>
-<unit id="org.eclipse.buckminster.pde.headless.feature.feature.group" version="1.5.0.v20130317-1220"/>
-<unit id="org.eclipse.buckminster.cvs.headless.feature.feature.group" version="1.5.0.v20120823-1443"/>
-<unit id="org.eclipse.buckminster.product.feature.group" version="1.5.0.v20121128-1216"/>
-<unit id="org.eclipse.buckminster.psf.feature.feature.group" version="1.5.0.v20120304-2134"/>
-<repository location="http://download.eclipse.org/tools/buckminster/headless-4.2/"/>
+<unit id="com.google.gwt.eclipse.sdkbundle.feature.feature.group" version="2.5.1"/>
+<unit id="com.google.gdt.eclipse.suite.e43.feature.feature.group" version="3.4.1.v201309130748-rel-r43"/>
+<repository location="https://dl.google.com/eclipse/plugin/4.3"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.buckminster.maven.headless.feature.feature.group" version="1.6.0.v20130317-0829"/>
+<unit id="org.eclipse.buckminster.core.headless.feature.feature.group" version="1.6.0.v20130729-0927"/>
+<unit id="org.eclipse.buckminster.cvs.headless.feature.feature.group" version="1.6.0.v20130317-0829"/>
+<unit id="org.eclipse.buckminster.git.headless.feature.feature.group" version="1.6.0.v20130614-0659"/>
+<unit id="org.eclipse.buckminster.psf.feature.feature.group" version="1.6.0.v20130317-0829"/>
+<unit id="org.eclipse.buckminster.pde.headless.feature.feature.group" version="1.6.0.v20130407-2104"/>
+<repository location="http://download.eclipse.org/tools/buckminster/headless-4.3/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.jdt.feature.group" version="3.9.1.v20130911-1000"/>
+<repository location="http://download.eclipse.org/releases/kepler"/>
 </location>
 </locations>
 <environment>

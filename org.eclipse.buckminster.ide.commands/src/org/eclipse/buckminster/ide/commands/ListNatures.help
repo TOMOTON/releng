@@ -1,6 +1,6 @@
-Lists the natures which have been registered for the platform.
+Lists the jobs currently active.
 
-usage: listnatures
+usage: listjobs
        [{ -? | --help }]
 
  -?

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.pde.team.feature"
       label="PDE Team Extensions"
-      version="0.9.0.qualifier">
+      version="0.10.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

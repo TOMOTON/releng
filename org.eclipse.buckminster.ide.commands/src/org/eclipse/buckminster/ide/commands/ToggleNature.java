@@ -2,9 +2,7 @@ package org.eclipse.buckminster.ide.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.buckminster.cmdline.Option;
@@ -15,7 +13,6 @@ import org.eclipse.buckminster.core.commands.WorkspaceCommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -102,7 +99,7 @@ public class ToggleNature extends WorkspaceCommand {
 			throw new SimpleErrorExitException("Nature identifier argument missing.");
 		monitor.beginTask("Toggling nature on projects...", 3);	
 		IProjectNatureDescriptor[] descriptors = ResourcesPlugin.getWorkspace().getNatureDescriptors();
-		monitor.worked(1);
+		monitor.worked(1); // work=2
 		boolean known = false;
 		for (IProjectNatureDescriptor descriptor: descriptors) {	
 			if (descriptor.getNatureId().equals(natureId)) {
@@ -113,18 +110,15 @@ public class ToggleNature extends WorkspaceCommand {
 		if (!known) {
 			throw new SimpleErrorExitException("Buckminster installation does not have nature '" + natureId + " 'registered!");
 		}
-		monitor.worked(1);
+		monitor.worked(1); // work=1
 		List<IProject> projectList = new ArrayList<IProject>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();		
 		projectList.addAll(Arrays.asList(root.getProjects()));
 		filterProjects(projectList);
-		monitor.worked(1);
+		monitor.worked(1); // work=0
 		for (IProject project: projectList) {
 			toggleNature(project, natureId);
 		}
-		// Refresh and save workspace.		
-		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		ResourcesPlugin.getWorkspace().save(true, monitor);
 		monitor.done();
 		return 0;
 	}

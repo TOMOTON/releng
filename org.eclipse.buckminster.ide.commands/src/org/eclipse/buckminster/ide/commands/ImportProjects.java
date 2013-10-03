@@ -143,23 +143,19 @@ public class ImportProjects extends WorkspaceCommand {
 	protected int internalRun(IProgressMonitor monitor) throws Exception {
 		if(sourceDirectory == null)
 			throw new SimpleErrorExitException("Source directory argument missing.");
-		monitor.beginTask("Importing projects...", 4);		
+		monitor.beginTask("Importing projects...", 2);		
 		File directory = new File(sourceDirectory);	
 		if(!directory.isDirectory())
 			throw new SimpleErrorExitException("Path '" + sourceDirectory + "' is not a directory.");		
 		// Enumerate and import.
 		List<ProjectRecord> projectRecordList = enumerateProjectsRecordsFrom(directory, new SubProgressMonitor(monitor, 1));
-		monitor.worked(1);
+		monitor.worked(1); // work = 1
 		filterProjects(projectRecordList);
 		createProjects(projectRecordList, new SubProgressMonitor(monitor, projectRecordList.size()));
 		if(copy) {
 			System.err.println("Copy not implemented.");
 		}
-		monitor.worked(1);
-		// Refresh and save workspace.		
-		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		ResourcesPlugin.getWorkspace().save(true, monitor);
-		monitor.worked(1);
+		monitor.worked(1); // work = 0
 		outReport(projectRecordList);
 		monitor.done();		
 		return 0;
@@ -269,7 +265,7 @@ public class ImportProjects extends WorkspaceCommand {
 		monitor.beginTask("Creating projects...", projectRecordList.size());
 		for(ProjectRecord record: projectRecordList) {
 			createProject(record, new SubProgressMonitor(monitor, 1));		
-			monitor.worked(1);
+			monitor.worked(1); // work = 0;
 		}
 		monitor.done();
 	}
@@ -485,7 +481,5 @@ public class ImportProjects extends WorkspaceCommand {
 		}
 		
 	}
-	
-	
-	
+
 }
