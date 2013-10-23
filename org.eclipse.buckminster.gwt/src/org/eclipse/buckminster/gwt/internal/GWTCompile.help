@@ -7,9 +7,10 @@ usage: gwtcompile
        [{ -L | --logLevel } ERROR | WARN | INFO | TRACE | DEBUG | SPAM  | ALL ]
        [{ -O | --outputStyle }  OBFUSCATED | PRETTY | DETAILED ]
        [{ -S | --strict} true | false ]
+	   [{ -W | --war } <war_directory>]       
        [{ -D | --deploy } <deploy_directory>]
        [{ -E | --extra } <extra_directory>]
-       [{ -G | --gwt } <sdk_version>]                  
+       [{ -G | --gwt } <sdk_version>]            
        { -P | --project } <project_name>]
        <modules(s)>       
 
@@ -24,6 +25,17 @@ usage: gwtcompile
   The Java-to-JavaScript compilation style. Defaults to 'OBFUSCATED'.
  -S
 --strict Only succeed if no input files have errors. Defaults to true.
+ -F
+--draftCompile Enable faster, but less-optimized, compilations.
+ -Z
+--optimizationLevel Sets the optimization level used by the compiler (0=none, 9=maximum).
+ -T
+--localWorkers The number of local workers to use when compiling.
+ -X
+--experimental Comma separated list of experimentals, e.g. disableClassMetadata, disableCastChecking, enableClosureCompiler
+ -W
+--war
+  The directory into which deployable output files will be written (defaults to 'war')
  -D
 --deploy <deploy_directory>
   The directory into which deployable but not servable output files will be written (defaults to 'WEB-INF/deploy' under the -war directory). 

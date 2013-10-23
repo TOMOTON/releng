@@ -54,6 +54,18 @@ public class GWTCompile extends WorkspaceCommand {
 	static private final OptionDescriptor OPTION_STRICT = new OptionDescriptor(
 			'S', "strict", OptionValueType.OPTIONAL);
 
+	static private final OptionDescriptor OPTION_DRAFT_COMPILE = new OptionDescriptor(
+			'F', "draftCompile", OptionValueType.NONE);
+
+	static private final OptionDescriptor OPTION_OPTIMIZATION_LEVEL = new OptionDescriptor(
+			'Z', "optimizationLevel", OptionValueType.REQUIRED);
+
+	static private final OptionDescriptor OPTION_LOCAL_WORKERS = new OptionDescriptor(
+			'T', "localWorkers", OptionValueType.REQUIRED);
+
+	static private final OptionDescriptor OPTION_EXPERIMENTAL = new OptionDescriptor(
+			'X', "experimental", OptionValueType.REQUIRED);
+
 	static private final OptionDescriptor OPTION_DEPLOY = new OptionDescriptor(
 			'D', "deploy", OptionValueType.REQUIRED);
 
@@ -76,7 +88,15 @@ public class GWTCompile extends WorkspaceCommand {
 	
 	private LogLevel logLevel = DEFAULT_LOG_LEVEL;
 	
-	boolean strict = true;
+	private boolean strict = true;
+	
+	private boolean draftCompile = false;
+	
+	private int optimizationLevel = -1;
+	
+	private int localWorkers = -1;
+	
+	private String[] experimentals;
 	
 	private String deployDir;
 
@@ -118,6 +138,38 @@ public class GWTCompile extends WorkspaceCommand {
 		this.strict = strict;
 	}
 
+	public boolean isDraftCompile() {
+		return draftCompile;				
+	}
+	
+	public void setDraftCompile(boolean draftCompile) {
+		this.draftCompile = draftCompile;
+	}
+	
+	public int getOptimizationLevel() {
+		return optimizationLevel;
+	}
+
+	public void setOptimizationLevel(int optimizationLevel) {
+		this.optimizationLevel = optimizationLevel;
+	}
+
+	public int getLocalWorkers() {
+		return localWorkers;
+	}
+	
+	public void setLocalWorkers(int localWorkers) {
+		this.localWorkers = localWorkers;
+	}
+	
+	public String[] getExperimentals() {
+		return experimentals;
+	}
+	
+	public void setExperimentals(String[] experimentals) {
+		this.experimentals = experimentals;
+	}
+	
 	public String getDeployDir() {
 		return deployDir;
 	}
@@ -165,6 +217,10 @@ public class GWTCompile extends WorkspaceCommand {
 		appendHere.add(OPTION_OUTPUT_STYLE);
 		appendHere.add(OPTION_LOG_LEVEL);
 		appendHere.add(OPTION_STRICT);
+		appendHere.add(OPTION_DRAFT_COMPILE);
+		appendHere.add(OPTION_OPTIMIZATION_LEVEL);
+		appendHere.add(OPTION_LOCAL_WORKERS);
+		appendHere.add(OPTION_EXPERIMENTAL);
 		appendHere.add(OPTION_DEPLOY);
 		appendHere.add(OPTION_EXTRA);
 		appendHere.add(OPTION_GWT);			
@@ -180,15 +236,27 @@ public class GWTCompile extends WorkspaceCommand {
 		} else if (option.is(OPTION_LOG_LEVEL)) {
 			setLogLevel(option.getValue());		
 		} else if (option.is(OPTION_STRICT)) {
-			boolean value = true;
 			try {
-				value = Boolean.parseBoolean(option.getValue());
+				setStrict(Boolean.parseBoolean(option.getValue()));
 			} catch (Exception ignore) {}
-			setStrict(value);
 		} else if (option.is(OPTION_DEPLOY)) {
-			setDeployDir(option.getValue());	
+			setDeployDir(option.getValue());
+		} else if (option.is(OPTION_DRAFT_COMPILE)) {
+			setDraftCompile(true);			
+		} else if (option.is(OPTION_OPTIMIZATION_LEVEL)) {
+			try {
+				setOptimizationLevel(Integer.parseInt(option.getValue()));
+			} catch (Exception ignore) {}
+		} else if (option.is(OPTION_LOCAL_WORKERS)) {
+			try {
+				setLocalWorkers(Integer.parseInt(option.getValue()));
+			} catch (Exception ignore) {}		
+		} else if (option.is(OPTION_EXPERIMENTAL)) {
+			try {
+				setExperimentals(option.getValue().split(","));
+			} catch (Exception ignore) {}		
 		} else if (option.is(OPTION_EXTRA)) {
-			setExtraDir(option.getValue());	
+			setExtraDir(option.getValue());				
 		} else if (option.is(OPTION_GWT)) {
 			setGwtVersion(option.getValue());				
 		} else if (option.is(OPTION_PROJECT)) {
@@ -216,6 +284,16 @@ public class GWTCompile extends WorkspaceCommand {
 			throw new SimpleErrorExitException("Missing project name!");
 		if(modules == null || modules.length == 0)
 			throw new SimpleErrorExitException("At least one GWT module needs to be specified!");
+		if(optimizationLevel != -1) {
+			if (optimizationLevel < 0 || optimizationLevel > 9) {
+				throw new SimpleErrorExitException("Optimization level should be a value between 1 and 9!");
+			}
+		}
+		if(localWorkers != -1) {
+			if(localWorkers < 1) {
+				throw new SimpleErrorExitException("At least one local worker is required!");
+			}
+		}
 		int exitValue = 0;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject project = workspace.getRoot().getProject(projectName);
@@ -240,7 +318,21 @@ public class GWTCompile extends WorkspaceCommand {
 		}
 		if(extraDir != null) {
 			extraArgs += "-extra " + extraDir + ' ';
-		}		
+		}
+		if(isDraftCompile()) {
+			extraArgs += "-draftCompile ";
+		}
+		if(getOptimizationLevel() != -1) {
+			extraArgs += "-optimize " + getOptimizationLevel() + ' '; 
+		}
+		if(getLocalWorkers() != -1) {
+			extraArgs += "-localWorkers " + getLocalWorkers() + ' '; 
+		}
+		if(getExperimentals() != null) {
+			for(String experimental: getExperimentals()) {
+				extraArgs += "-X" + experimental + ' ';
+			}
+		}
 		settings.setExtraArgs(extraArgs);
 		if(gwtVersion != null) {
 			IClasspathContainer classpathContainer =  GWTSDKClasspathContainer.resolveClasspathContainer(GWTSDKClasspathContainer.CONTAINER_PATH, javaProject, getGwtOSGiVersion());
