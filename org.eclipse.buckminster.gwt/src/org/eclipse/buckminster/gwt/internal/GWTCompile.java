@@ -231,35 +231,46 @@ public class GWTCompile extends WorkspaceCommand {
 	protected void handleOption(Option option) throws Exception {
 		if (option.is(OPTION_WAR)) {
 			setWarDirectory(option.getValue());
-		} else if (option.is(OPTION_OUTPUT_STYLE)) {
+		} else 
+		if (option.is(OPTION_OUTPUT_STYLE)) {
 			setOutputStyle(option.getValue());
-		} else if (option.is(OPTION_LOG_LEVEL)) {
+		} else
+		if (option.is(OPTION_LOG_LEVEL)) {
 			setLogLevel(option.getValue());		
-		} else if (option.is(OPTION_STRICT)) {
+		} else
+		if (option.is(OPTION_STRICT)) {
 			try {
 				setStrict(Boolean.parseBoolean(option.getValue()));
 			} catch (Exception ignore) {}
-		} else if (option.is(OPTION_DEPLOY)) {
+		} else
+		if (option.is(OPTION_DEPLOY)) {
 			setDeployDir(option.getValue());
-		} else if (option.is(OPTION_DRAFT_COMPILE)) {
+		} else
+		if (option.is(OPTION_DRAFT_COMPILE)) {
 			setDraftCompile(true);			
-		} else if (option.is(OPTION_OPTIMIZATION_LEVEL)) {
+		} else
+		if (option.is(OPTION_OPTIMIZATION_LEVEL)) {
 			try {
 				setOptimizationLevel(Integer.parseInt(option.getValue()));
 			} catch (Exception ignore) {}
-		} else if (option.is(OPTION_LOCAL_WORKERS)) {
+		} else
+		if (option.is(OPTION_LOCAL_WORKERS)) {
 			try {
 				setLocalWorkers(Integer.parseInt(option.getValue()));
 			} catch (Exception ignore) {}		
-		} else if (option.is(OPTION_EXPERIMENTAL)) {
+		} else
+		if (option.is(OPTION_EXPERIMENTAL)) {
 			try {
 				setExperimentals(option.getValue().split(","));
 			} catch (Exception ignore) {}		
-		} else if (option.is(OPTION_EXTRA)) {
+		} else
+		if (option.is(OPTION_EXTRA)) {
 			setExtraDir(option.getValue());				
-		} else if (option.is(OPTION_GWT)) {
+		} else
+		if (option.is(OPTION_GWT)) {
 			setGwtVersion(option.getValue());				
-		} else if (option.is(OPTION_PROJECT)) {
+		} else
+		if (option.is(OPTION_PROJECT)) {
 			setProjectName(option.getValue());
 		} else
 			super.handleOption(option);
