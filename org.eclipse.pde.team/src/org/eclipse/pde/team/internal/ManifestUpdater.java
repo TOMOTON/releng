@@ -22,16 +22,18 @@ public class ManifestUpdater implements IVersionUpdater {
 	public void update(IFile manifestFile, Version version, IProgressMonitor monitor) throws CoreException {			
 		if(version == null)
 			throw new NullPointerException("Version cannot be undefined!");
+		String charset = manifestFile.getCharset();		
 		InputStream in = manifestFile.getContents();
 		ByteArrayOutputStream content;
 		try {
-			String charset = manifestFile.getCharset();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
 			byte[] separator = System.getProperty("line.separator").getBytes(charset);
 			content = new ByteArrayOutputStream();
 			String line;
+			Version pattern = null;
 			while((line = reader.readLine()) != null) {
-				if(line.startsWith("Bundle-Version")) {
+				if(line.startsWith("Bundle-Version:")) {
+					pattern = toVersion(line.substring("Bundle-Version:".length()));
 					content.write("Bundle-Version: ".getBytes(charset));
 					content.write(version.toString().getBytes(charset));						
 				} else {
@@ -39,12 +41,36 @@ public class ManifestUpdater implements IVersionUpdater {
 				}
 				content.write(separator);
 			}
+			if (pattern != null) {
+				content = secondPass(content.toByteArray(), charset, version, pattern);
+			}
+			manifestFile.setContents(new ByteArrayInputStream(content.toByteArray()), true, false, monitor);
 		} catch(IOException ioe) {
 			throw new CoreException(new ResourceStatus(Status.ERROR, manifestFile.getProjectRelativePath(), "Could not update MANIFEST.MF!", ioe));
 		} finally {
 			try { in.close(); } catch (Exception ignore) {}
 		}
-		manifestFile.setContents(new ByteArrayInputStream(content.toByteArray()), true, false, monitor);
+	}
+	
+	private Version toVersion(String value) {
+		return Version.parseVersion(value);
+	}
+	
+	private ByteArrayOutputStream secondPass(byte[] bytes, String charset, Version version, Version pattern) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes), charset));
+		byte[] separator = System.getProperty("line.separator").getBytes(charset);
+		ByteArrayOutputStream content = new ByteArrayOutputStream();
+		String line;
+		while((line = reader.readLine()) != null) {
+			if(line.startsWith("Fragment-Host:")) {
+				line = line.replace("\"" + pattern +"\"", "\"" + version +"\"");
+				content.write(line.getBytes(charset));
+			} else {
+				content.write(line.getBytes(charset));	
+			}
+			content.write(separator);
+		}
+		return content;
 	}
 	
 }
