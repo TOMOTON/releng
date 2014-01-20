@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2011 IBM Corporation, SAP AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eclipse.pde.team.internal;
 
 import java.io.BufferedReader;
@@ -63,6 +70,9 @@ public class ManifestUpdater implements IVersionUpdater {
 		String line;
 		while((line = reader.readLine()) != null) {
 			if(line.startsWith("Fragment-Host:")) {
+				if ("qualifier".equals(version.getQualifier())) { //? Qualifier expansion will come too late: remove it.
+					version = new Version(version.getMajor(), version.getMinor(), version.getMicro());
+				}
 				line = line.replace("\"" + pattern +"\"", "\"" + version +"\"");
 				content.write(line.getBytes(charset));
 			} else {

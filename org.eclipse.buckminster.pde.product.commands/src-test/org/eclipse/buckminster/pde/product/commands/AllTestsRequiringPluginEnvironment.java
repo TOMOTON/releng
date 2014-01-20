@@ -7,22 +7,15 @@
  *******************************************************************************/
 package org.eclipse.buckminster.pde.product.commands;
 
-import org.eclipse.core.runtime.Path;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-public class PathUtil {
-
-	public static String extractPath(Path path) {
-		if(path.segmentCount() > 1)
-			return path.removeLastSegments(1).toString();
-		else
-			return ".";
-	}
-
-	public static String extractFileName(Path path) {
-		if(path.segmentCount() > 0)
-			return path.lastSegment();
-		return path.toString();
-	}
-
+public class AllTestsRequiringPluginEnvironment {
+	
+	 public static Test suite() { 
+         TestSuite suite = new TestSuite("Tests requiring Eclipse environment");
+         suite.addTestSuite(TestOptionParsing.class);
+         return suite; 
+    }
 
 }

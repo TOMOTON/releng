@@ -7,7 +7,6 @@
  * copyright holders listed above, as Initial Contributors under such license.
  * The text of such license is available at www.eclipse.org.
  *******************************************************************************/
-
 package org.eclipse.buckminster.pde.product.commands;
 
 import java.util.ArrayList;
